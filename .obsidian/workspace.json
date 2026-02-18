@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Offensive_Hacking/Web-API-Exploitation/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
-                "mode": "source",
+                "file": "Application-Security/WEB-API/DVWS-notes.md",
+                "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "portswigger-sqli-Lab-notes"
+              "title": "DVWS-notes"
             }
           }
         ]
@@ -187,6 +187,9 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
+    "README.md",
+    "Application-Security/WEB-API/OWASP/OWASP_TOP_10_API.md",
+    "Playbooks/Business_logic.md",
     "Offensive_Hacking/Web-API-Exploitation/API-Exploitation/OWASP_TOP_10_API.md",
     "Offensive_Hacking/Web-API-Exploitation/API-Exploitation",
     "Offensive_Hacking/Web-API-Exploitation/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",

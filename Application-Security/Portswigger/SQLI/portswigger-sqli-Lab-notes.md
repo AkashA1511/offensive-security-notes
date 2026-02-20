@@ -1,4 +1,4 @@
-# LAB:  SQL injection attack, querying the database type and version on Oracle
+	# LAB:  SQL injection attack, querying the database type and version on Oracle
 
 Goal : Display Database version string 
 

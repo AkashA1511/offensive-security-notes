@@ -14,14 +14,71 @@
               "type": "markdown",
               "state": {
                 "file": "Application-Security/WEB-API/DVWS-notes.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
               "title": "DVWS-notes"
             }
+          },
+          {
+            "id": "319200a967d47979",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Playbooks/Business_logic.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "Business_logic"
+            }
+          },
+          {
+            "id": "1115242925948551",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Playbooks/IDOR.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "IDOR"
+            }
+          },
+          {
+            "id": "4c976ce1b478a1f3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Playbooks/Race_Condition.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "Race_Condition"
+            }
+          },
+          {
+            "id": "e2dd39ed0cd515a4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "portswigger-sqli-Lab-notes"
+            }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -185,11 +242,23 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "4217fb69f57176ef",
+  "active": "e2dd39ed0cd515a4",
   "lastOpenFiles": [
-    "README.md",
-    "Application-Security/WEB-API/OWASP/OWASP_TOP_10_API.md",
+    "BugBounty/Twitter-Dump.md",
+    "Playbooks/Rate_Limit.md",
+    "Playbooks/Race_Condition.md",
+    "Playbooks/IDOR.md",
     "Playbooks/Business_logic.md",
+    "Application-Security/WEB-API/OWASP_TOP_10_API.md",
+    "Application-Security/WEB-API/DVWS-notes.md",
+    "Application-Security/WEB-API/OWASP/OWASP_TOP_10_API.md",
+    "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
+    "BugBounty/No-Rate-Limit and Rate Limit Bypass.md",
+    "OSCP/Network-Port Scanning.md",
+    "BugBounty/DORK.md",
+    "Scripting-Practice/rate-limit-bypass.py",
+    "Application-Security/Portswigger/SQLI/SQL_notes.md",
+    "README.md",
     "Offensive_Hacking/Web-API-Exploitation/API-Exploitation/OWASP_TOP_10_API.md",
     "Offensive_Hacking/Web-API-Exploitation/API-Exploitation",
     "Offensive_Hacking/Web-API-Exploitation/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",

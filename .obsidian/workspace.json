@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
+                "file": "Application-Security/Portswigger/CSRF/CSRF-labs.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "portswigger-sqli-Lab-notes"
+              "title": "CSRF-labs"
             }
           }
         ],
@@ -244,7 +244,12 @@
   },
   "active": "e2dd39ed0cd515a4",
   "lastOpenFiles": [
+    "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
+    "Application-Security/Portswigger/CSRF/CSRF-labs.md",
+    "Application-Security/Portswigger/CSRF",
+    "BugBounty/Recon.md",
     "BugBounty/Twitter-Dump.md",
+    "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
     "Playbooks/Rate_Limit.md",
     "Playbooks/Race_Condition.md",
     "Playbooks/IDOR.md",
@@ -252,7 +257,6 @@
     "Application-Security/WEB-API/OWASP_TOP_10_API.md",
     "Application-Security/WEB-API/DVWS-notes.md",
     "Application-Security/WEB-API/OWASP/OWASP_TOP_10_API.md",
-    "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
     "BugBounty/No-Rate-Limit and Rate Limit Bypass.md",
     "OSCP/Network-Port Scanning.md",
     "BugBounty/DORK.md",

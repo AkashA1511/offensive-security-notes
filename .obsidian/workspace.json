@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Application-Security/Portswigger/CSRF/CSRF-labs.md",
+                "file": "BugBounty/Offensive-VC-Notes.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "CSRF-labs"
+              "title": "Offensive-VC-Notes"
             }
           }
         ],
@@ -244,8 +244,9 @@
   },
   "active": "e2dd39ed0cd515a4",
   "lastOpenFiles": [
-    "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
     "Application-Security/Portswigger/CSRF/CSRF-labs.md",
+    "BugBounty/Offensive-VC-Notes.md",
+    "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
     "Application-Security/Portswigger/CSRF",
     "BugBounty/Recon.md",
     "BugBounty/Twitter-Dump.md",

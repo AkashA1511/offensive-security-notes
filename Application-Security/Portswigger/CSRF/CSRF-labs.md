@@ -9,4 +9,4 @@ go the post request of email change > generate a CSRF POC > paste it in the Expl
 
 --------------------------------
 
-
+# LAB : 

@@ -55,20 +55,6 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Playbooks/Race_Condition.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "Race_Condition"
-            }
-          },
-          {
-            "id": "e2dd39ed0cd515a4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
                 "file": "BugBounty/Offensive-VC-Notes.md",
                 "mode": "source",
                 "source": true
@@ -78,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -242,17 +228,19 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "e2dd39ed0cd515a4",
+  "active": "4c976ce1b478a1f3",
   "lastOpenFiles": [
-    "Application-Security/Portswigger/CSRF/CSRF-labs.md",
-    "BugBounty/Offensive-VC-Notes.md",
+    "CTF-and-writeups/Metasploit-Exploitation THM.md",
     "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
+    "Application-Security/Mobile/Offensive_VC_Android.md",
+    "BugBounty/Offensive-VC-Notes.md",
+    "Playbooks/Race_Condition.md",
+    "Application-Security/Portswigger/CSRF/CSRF-labs.md",
     "Application-Security/Portswigger/CSRF",
     "BugBounty/Recon.md",
     "BugBounty/Twitter-Dump.md",
     "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
     "Playbooks/Rate_Limit.md",
-    "Playbooks/Race_Condition.md",
     "Playbooks/IDOR.md",
     "Playbooks/Business_logic.md",
     "Application-Security/WEB-API/OWASP_TOP_10_API.md",

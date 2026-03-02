@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "BugBounty/Offensive-VC-Notes.md",
+                "file": "Application-Security/Portswigger/CSRF/CSRF-labs.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Offensive-VC-Notes"
+              "title": "CSRF-labs"
             }
           }
         ],
@@ -231,9 +231,9 @@
   "active": "4c976ce1b478a1f3",
   "lastOpenFiles": [
     "CTF-and-writeups/Metasploit-Exploitation THM.md",
+    "BugBounty/Offensive-VC-Notes.md",
     "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
     "Application-Security/Mobile/Offensive_VC_Android.md",
-    "BugBounty/Offensive-VC-Notes.md",
     "Playbooks/Race_Condition.md",
     "Application-Security/Portswigger/CSRF/CSRF-labs.md",
     "Application-Security/Portswigger/CSRF",

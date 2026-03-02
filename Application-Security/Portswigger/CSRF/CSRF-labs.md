@@ -9,4 +9,13 @@ go the post request of email change > generate a CSRF POC > paste it in the Expl
 
 --------------------------------
 
-# LAB : 
+# LAB :  CSRF where token validation depends on request method
+
+Goal : I have to use my exploit server to host an HTML page that uses CSRF attack to change viewer email address. 
+
+Approach : 
+
+Generate a CSRF_POC > paste it in the exploitation server and store and deliver to victim. 
+
+
+----------------------------------------

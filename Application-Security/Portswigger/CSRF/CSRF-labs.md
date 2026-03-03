@@ -19,3 +19,5 @@ Generate a CSRF_POC > paste it in the exploitation server and store and deliver 
 
 
 ----------------------------------------
+
+# LAb:

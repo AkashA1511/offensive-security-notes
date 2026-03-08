@@ -147,5 +147,268 @@ int main() {
 [[Offensive_VC_Android]]
 ------------------------------------------------------------
 
+## Subdomain Takeover 
+
+#### 1. What is a Subdomain Takeover (Simple Explanation)
+
+A **subdomain takeover happens when a subdomain points to a service that no longer exists, but the DNS record still exists.**
+
+Example:
+
+blog.example.com → cname → example.herokuapp.com
+
+If the company **deleted the Heroku app** but **forgot to remove the DNS record**, you can:
+
+1. Create a **Heroku app with that same name**
+    
+2. Attach the domain
+    
+3. Now **blog.example.com points to YOUR server**
+    
+
+You now control their subdomain.
+
+This is a **subdomain takeover vulnerability**.
+
+---
+
+#### 2. Real Example DNS
+
+Let's say you run:
+
+dig blog.example.com
+
+Output:
+
+blog.example.com CNAME example.herokuapp.com
+
+Now if you open the website you see:
+
+No such app
+
+This means the service is **unclaimed**.
+
+If you claim it → **Takeover successful**.
+
+---
+
+#### 3. Why This Happens
+
+Companies:
+
+• Remove cloud service  
+• Forget DNS record  
+• Subdomain still points to dead service
+
+Services commonly involved:
+
+|Service|Message|
+|---|---|
+|AWS S3|NoSuchBucket|
+|Heroku|No such app|
+|GitHub Pages|There isn't a GitHub Pages site here|
+|Shopify|Sorry this shop is currently unavailable|
+|Fastly|Fastly error: unknown domain|
+|Azure|404 Web Site not found|
+
+These are **takeover fingerprints**.
+
+---
+
+#### 4. Step 1 — Find Subdomains
+
+First collect subdomains.
+
+Tools:
+
+subfinder  
+assetfinder  
+amass  
+crt.sh  
+chaos
+
+Example:
+
+subfinder -d target.com -all -recursive > subs.txt
+
+Then combine tools:
+
+assetfinder --subs-only target.com >> subs.txt
+
+Remove duplicates:
+
+sort -u subs.txt -o subs.txt
+
+---
+
+#### 5. Step 2 — Find Alive Subdomains
+
+Now check which ones respond.
+
+Tool:
+
+httpx
+
+Example:
+
+cat subs.txt | httpx -silent -status-code
+
+But for takeover we also want **dead ones**.
+
+So we keep both.
+
+---
+
+#### 6. Step 3 — Detect Possible Takeovers
+
+Tool:
+
+### Subjack
+
+subjack -w subs.txt -t 100 -timeout 30 -ssl -v
+
+or
+
+### Nuclei
+
+nuclei -l subs.txt -t takeovers/
+
+or
+
+### Subzy
+
+subzy run --targets subs.txt
+
+These tools detect **fingerprints**.
+
+Example output:
+
+vulnerable: blog.example.com (Heroku)
+
+---
+
+#### 7. Step 4 — Verify Manually (VERY IMPORTANT)
+
+Tools give **false positives**.
+
+You must verify.
+
+Run:
+
+dig subdomain.target.com
+
+Check:
+
+CNAME → service
+
+Then open website.
+
+If message says:
+
+No such app
+
+Then check if service **allows claiming**.
+
+Example:
+
+Go to Heroku → create app.
+
+If it allows domain binding → vulnerability confirmed.
+
+---
+
+#### 8. Step 5 — Exploiting the Takeover
+
+Example with **GitHub Pages**.
+
+DNS:
+
+blog.target.com CNAME username.github.io
+
+But repo deleted.
+
+You create:
+
+username.github.io
+
+Add:
+
+blog.target.com
+
+Now you control:
+
+https://blog.target.com
+
+Put a **PoC page**:
+
+Subdomain takeover by Akash
+
+---
+
+#### 9. Advanced Hunting Method (Used by Pro Hunters)
+
+Pro hunters don't rely only on tools.
+
+They do **DNS analysis**.
+
+Check for:
+
+CNAME  
+NS  
+A records
+
+Command:
+
+dnsx -l subs.txt -resp
+
+Look for:
+
+CNAME → external service
+
+Example:
+
+dev.target.com → dev.herokuapp.com  
+cdn.target.com → fastly.net  
+assets.target.com → github.io
+
+Then check if service is **unclaimed**.
+
+---
+
+#### 10. Cloud Services With Most Takeovers
+
+Very important list:
+
+AWS S3  
+Heroku  
+GitHub Pages  
+Azure  
+Shopify  
+Fastly  
+Cloudfront  
+Bitbucket  
+Ghost.io  
+Pantheon  
+Zendesk  
+WordPress  
+Tumblr
+
+Bug hunters specifically hunt these.
+
+---
+
+#### 11. Advanced Automation Pipeline
+
+Real hunters run pipelines like this:
+
+subfinder -d target.com -all -recursive |  
+httpx -silent |  
+dnsx -cname |  
+nuclei -t takeovers/
+
+OR
+
+amass enum -passive -d target.com |  
+subjack -ssl -t 100
 
 

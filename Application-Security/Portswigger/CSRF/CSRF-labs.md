@@ -20,4 +20,5 @@ Generate a CSRF_POC > paste it in the exploitation server and store and deliver 
 
 ----------------------------------------
 
-# LAb:
+# LAB : CSRF where token validation depends on token being present
+- Remove the CSRF token from the generated poc and send it to victim

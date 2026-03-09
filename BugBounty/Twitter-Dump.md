@@ -1,4 +1,14 @@
 
+1)subfinder -dL target.txt -all -o subs.txt 
+2)httpx -list subs.txt -mc 200,301,302,403 -o alive.txt
+3)katana -list alive.txt -d 5 -jc -kf all -o katana.txt 
+4)urlfinder -list alive.txt -all -o urlfinder.txt 5)cat subs.txt | waybackurls > wayback.txt 
+6)cat katana.txt urlfinder.txt wayback.txt | sort -u > all_urls.txt 
+7)grep '=' all_urls.txt | sort -u > params.txt
+8)urless -i params.txt -o clean_params.txt
+9)dalfox file clean_params.txt
+
+
 ------
 Recon Smarter: Finding Sensitive Files in Large URL Lists Most bug hunters stop at URLs. Real impact comes from what those URLs expose. 
 This workflow combines: • high-risk file extensions • real-world secret patterns • automated URL discovery Result → fewer URLs, higher signal, better findings. 

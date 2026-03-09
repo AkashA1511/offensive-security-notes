@@ -411,4 +411,17 @@ OR
 amass enum -passive -d target.com |  
 subjack -ssl -t 100
 
+----
+#### AWS s3 bucket takeover 
 
+- you get error and 404 not found and or any error then you can takeover it and check with "can i take this subdomain"
+-  create a S3 bucket first 
+-  Upload  a file 
+- create a static website hosting 
+-  route 53 > DNS Management  > give domain name > custom name server 
+
+#### Shopify takeover 
+
+- Error : This shop is not currently available
+- create  your store 
+- add domain 

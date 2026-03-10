@@ -15,7 +15,8 @@ Goal : I have to use my exploit server to host an HTML page that uses CSRF attac
 
 Approach : 
 
-Generate a CSRF_POC > paste it in the exploitation server and store and deliver to victim. 
+change the csrf_token and send request we are gonna get the bad request, 
+then just changed the method of the same wrong csrf token and send rqst and it gonna give us 302 OK so create a csrf poc of that and send it to the exploited server 
 
 
 ----------------------------------------

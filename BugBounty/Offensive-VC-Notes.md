@@ -434,3 +434,9 @@ subjack -ssl -t 100
 You are already very good at IDOR you dont need any notes XD !!! 
 
 Just changed ID's, Methods hit and trial and many more things that 
+
+[[BugBounty/IDOR|IDOR]]
+
+--- 
+
+

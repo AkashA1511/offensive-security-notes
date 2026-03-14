@@ -23,3 +23,12 @@ then just changed the method of the same wrong csrf token and send rqst and it g
 
 # LAB : CSRF where token validation depends on token being present
 - Remove the CSRF token from the generated poc and send it to victim
+
+---
+
+# LAB : CSRF token is not tied to the user session
+
+-  Attacker can login with his account --> get his own token -> use the same token for victim account 
+-  Goal : use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address.
+
+Intersept the request of wiener send to repeater and then in another session login as a carlos and intersecpt the request and then later change the wiener CSRF token with carlos. 

@@ -34,37 +34,9 @@
               "icon": "lucide-file",
               "title": "Business_logic"
             }
-          },
-          {
-            "id": "1115242925948551",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Playbooks/IDOR.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "IDOR"
-            }
-          },
-          {
-            "id": "4c976ce1b478a1f3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Application-Security/Portswigger/CSRF/CSRF-labs.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "CSRF-labs"
-            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -228,34 +200,43 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "4c976ce1b478a1f3",
+  "active": "319200a967d47979",
   "lastOpenFiles": [
-    "CTF-and-writeups/Metasploit-Exploitation THM.md",
-    "BugBounty/Offensive-VC-Notes.md",
-    "CTF-and-writeups/# Privilege Escalation Via Role Manipulation.md",
-    "Application-Security/Mobile/Offensive_VC_Android.md",
-    "Playbooks/Race_Condition.md",
+    "Resources/githubplan.md",
+    "security_reaserch",
+    "Appsec",
+    "core_knowledge/web_architechture",
+    "core_knowledge",
+    "Labs/Writeups/Metasploit-THM.md",
+    "Labs/Writeups/# Privilege Escalation Via Role Manipulation.md",
+    "Labs/Writeups",
+    "Writeups/Metasploit-THM.md",
+    "Writeups/# Privilege Escalation Via Role Manipulation.md",
+    "Writeups",
+    "BugBounty/offensive/Business Logic Bugs for Web Applications.md",
+    "BugBounty/offensive/Authentication Bypass Vulnerabilities for Web Applications & APIs.md",
+    "BugBounty/offensive/No-Rate-Limit and Rate Limit Bypass.md",
+    "BugBounty/offensive/IDOR.md",
+    "BugBounty/offensive/File Upload.md",
+    "BugBounty/offensive/DORK.md",
+    "BugBounty/offensive",
+    "BugBounty/Random-Stuff-Online/Twitter-Dump.md",
+    "BugBounty/Random-Stuff-Online/Recon.md",
+    "BugBounty/Random-Stuff-Online",
+    "BugBounty/Notes/VP Notes.md",
+    "BugBounty/Notes/Offensive-VC-Notes.md",
+    "BugBounty/Notes",
+    "Application-Security/Web/notes.txt",
+    "Application-Security/Web/DVWS-notes.md",
+    "Application-Security/API/OWASP_TOP_10_API.md",
     "Application-Security/Portswigger/CSRF/CSRF-labs.md",
-    "Application-Security/Portswigger/CSRF",
-    "BugBounty/Recon.md",
-    "BugBounty/Twitter-Dump.md",
-    "Application-Security/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
-    "Playbooks/Rate_Limit.md",
-    "Playbooks/IDOR.md",
-    "Playbooks/Business_logic.md",
-    "Application-Security/WEB-API/OWASP_TOP_10_API.md",
-    "Application-Security/WEB-API/DVWS-notes.md",
-    "Application-Security/WEB-API/OWASP/OWASP_TOP_10_API.md",
-    "BugBounty/No-Rate-Limit and Rate Limit Bypass.md",
-    "OSCP/Network-Port Scanning.md",
+    "Labs/Portswigger/CSRF/CSRF-labs.md",
+    "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
+    "Labs/Portswigger/SQLI/SQL_notes.md",
+    "BugBounty/VP Notes.md",
+    "BugBounty/Authentication Bypass Vulnerabilities for Web Applications & APIs.md",
     "BugBounty/DORK.md",
-    "Scripting-Practice/rate-limit-bypass.py",
-    "Application-Security/Portswigger/SQLI/SQL_notes.md",
-    "README.md",
-    "Offensive_Hacking/Web-API-Exploitation/API-Exploitation/OWASP_TOP_10_API.md",
-    "Offensive_Hacking/Web-API-Exploitation/API-Exploitation",
-    "Offensive_Hacking/Web-API-Exploitation/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
-    "Offensive_Hacking/Web-API-Exploitation/Portswigger",
-    "Offensive_Hacking/Web-API-Exploitation/Portswigger/SQLI/SQL_notes.md"
+    "Resources/Personal RoadMap.md",
+    "Resources/Untitled.md"
   ]
 }

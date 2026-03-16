@@ -440,3 +440,6 @@ Just changed ID's, Methods hit and trial and many more things that
 --- 
 
 
+## Wordpress 
+- wpscan 
+	- enumerate all plugins 

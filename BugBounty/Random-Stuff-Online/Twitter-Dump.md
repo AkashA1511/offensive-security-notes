@@ -19,3 +19,4 @@ Step 3: Smart grep (FILES + SECRETS) We combine: â€¢ Sensitive file extensions â
 
 ------
 
+watch checklist

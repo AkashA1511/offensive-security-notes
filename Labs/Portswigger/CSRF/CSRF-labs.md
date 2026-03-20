@@ -29,6 +29,7 @@ then just changed the method of the same wrong csrf token and send rqst and it g
 # LAB : CSRF token is not tied to the user session
 
 -  Attacker can login with his account --> get his own token -> use the same token for victim account 
--  Goal : use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address.
+-  Goal : use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address
+- Approach : There are two user and  we have to check that can we use carlos CSRF token to wienr email changed !!  --> so for that we intercepted both the request and changed the CSRF to and take the CSRF POC and send it to victim. 
+--- 
 
-Intersept the request of wiener send to repeater and then in another session login as a carlos and intersecpt the request and then later change the wiener CSRF token with carlos. 

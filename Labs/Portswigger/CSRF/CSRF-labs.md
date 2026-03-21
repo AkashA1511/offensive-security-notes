@@ -33,3 +33,19 @@ then just changed the method of the same wrong csrf token and send rqst and it g
 - Approach : There are two user and  we have to check that can we use carlos CSRF token to wienr email changed !!  --> so for that we intercepted both the request and changed the CSRF to and take the CSRF POC and send it to victim. 
 --- 
 
+# LAB :  CSRF where token is tied to non-session cookie
+```
+In a variation on the preceding vulnerability, some applications do tie the CSRF token to a cookie, but not to the same cookie that is used to track sessions. This can easily occur when an application employs two different frameworks, one for session handling and one for CSRF protection, which are not integrated together:
+
+ POST /email/change HTTP/1.1
+ Host: vulnerable-website.com 
+ Content-Type: application/x-www-form-urlencoded 
+ Content-Length: 68 
+ Cookie: session=pSJYSScWKpmC60LpFOAHKixuFuM4uXWF; csrfKey=rZHCnSzEp8dbI6atzagGoSYyqJqTz5dv
+ csrf=RhV7yQDO0xcq9gLEah2WVbmuFqyOq7tY&email=wiener@normal-user.com
+
+This situation is harder to exploit but is still vulnerable. If the website contains any behavior that allows an attacker to set a cookie in a victim's browser, then an attack is possible. The attacker can log in to the application using their own account, obtain a valid token and associated cookie, leverage the cookie-setting behavior to place their cookie into the victim's browser, and feed their token to the victim in their CSRF attack.
+```
+
+- Goal : exploit server to html page host csrf attack 
+- 

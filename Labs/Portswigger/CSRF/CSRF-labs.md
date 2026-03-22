@@ -33,7 +33,7 @@ then just changed the method of the same wrong csrf token and send rqst and it g
 - Approach : There are two user and  we have to check that can we use carlos CSRF token to wienr email changed !!  --> so for that we intercepted both the request and changed the CSRF to and take the CSRF POC and send it to victim. 
 --- 
 
-# LAB :  CSRF where token is tied to non-session cookie
+# LAB :  CSRF where token is tied to non-session cookie - NOT SOLVED YET
 ```
 In a variation on the preceding vulnerability, some applications do tie the CSRF token to a cookie, but not to the same cookie that is used to track sessions. This can easily occur when an application employs two different frameworks, one for session handling and one for CSRF protection, which are not integrated together:
 

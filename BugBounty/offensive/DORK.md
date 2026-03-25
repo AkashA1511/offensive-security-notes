@@ -9,3 +9,5 @@
 (site:.at OR site:.be OR site:.bg OR site:.hr OR site:.cy OR site:.cz OR site:.dk OR site:.ee OR site:.fi OR site:.fr OR site:.de OR site:.gr OR site:.hu OR site:.ie OR site:.it OR site:.lv OR site:.lt OR site:.lu OR site:.mt OR site:.nl OR site:.pl OR site:.pt OR site:.ro OR site:.sk OR site:.si OR site:.es OR site:.se) ("responsible disclosure" OR "vulnerability disclosure" OR "report a vulnerability" OR "security.txt" OR "security policy") -inurl:hackerone -inurl:bugcrowd -inurl:intigriti -inurl:yeswehack -intext:"powered by"
 
 ```
+
+

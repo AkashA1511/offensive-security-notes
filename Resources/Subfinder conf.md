@@ -180,3 +180,4 @@ subfinder -d target.com -all -v
 ```
 
 The `-v` flag will show exactly which sources responded and which were skipped due to no key or exhausted quota. That way you always know what's working! 🎯
+

@@ -9,8 +9,8 @@
 		{"id":"7e0a35ba3d4548f2","type":"text","text":"analyzer.py\nsends each endpoint + params to Groq API\nAI detects: IDOR · SQLi · XSS · Open Redirect\nsuggests next steps per finding","x":-200,"y":220,"width":400,"height":140},
 		{"id":"a6e30b71f0c9441e","type":"text","text":"Clean JSON from parser.py\nendpoints · params · subdomains\n\n\nChunker\ngroups endpoints into small batches\n\n\nPrompt builder\nwraps endpoints in security context\n\n\nGroq API — Llama 3.3 70b\n\nResponse ","x":280,"y":320,"width":445,"height":320},
 		{"id":"4ad2eb6ea91241c4","type":"text","text":"REPORT\nCritical/high/medium/low","x":-175,"y":540,"width":350,"height":80},
-		{"id":"737c95b33baacc0b","x":-592,"y":90,"width":250,"height":60,"color":"6","type":"text","text":"use JSON alternative "},
-		{"id":"ee80cbe9a3e592c8","x":-592,"y":-25,"width":185,"height":90,"color":"6","type":"text","text":"crew AI library for managing things check that out "}
+		{"id":"737c95b33baacc0b","type":"text","text":"use JSON alternative ","x":-592,"y":90,"width":250,"height":60,"color":"6"},
+		{"id":"ee80cbe9a3e592c8","type":"text","text":"crew AI library for managing things check that out ","x":-592,"y":-25,"width":185,"height":90,"color":"6"}
 	],
 	"edges":[
 		{"id":"06abd7e27e923b50","fromNode":"2f367ac58510e25d","fromSide":"top","toNode":"96e9f14aa79711fc","toSide":"bottom"},

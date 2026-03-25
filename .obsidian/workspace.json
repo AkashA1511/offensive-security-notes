@@ -13,30 +13,64 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Application-Security/WEB-API/DVWS-notes.md",
+                "file": "Labs/Portswigger/CSRF/CSRF-labs.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "DVWS-notes"
+              "title": "CSRF-labs"
             }
           },
           {
-            "id": "319200a967d47979",
+            "id": "f4f5f3807cc96c0b",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Tools/recon/Untitled.canvas",
+                "viewState": {
+                  "x": 267.92191117397573,
+                  "y": 305.9284265988372,
+                  "zoom": 0
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "3131e4d3fa0640fa",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Tools/recon/reconX.canvas",
+                "viewState": {
+                  "x": 162.30871627633314,
+                  "y": 141.73155189081015,
+                  "zoom": -0.10920126546584619
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "reconX"
+            }
+          },
+          {
+            "id": "3d7a0490b9e477cc",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Playbooks/Business_logic.md",
+                "file": "BugBounty/offensive/DORK.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Business_logic"
+              "title": "DORK"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -93,7 +127,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "5f2b9a791c9b315e",
@@ -200,11 +235,23 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "319200a967d47979",
+  "active": "3131e4d3fa0640fa",
   "lastOpenFiles": [
+    "BugBounty/offensive/DORK.md",
+    "Tools/recon/reconX.canvas",
+    "BugBounty/Notes/METH.md",
+    "Resources/Subfinder conf.md",
+    "Tools/Rough Scripts.md",
+    "BugBounty/Notes/Offensive-VC-Notes.md",
+    "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
+    "Labs/Portswigger/CSRF/CSRF.md",
+    "Resources/bug_bounty_checklist.html",
+    "Labs/Portswigger/CSRF/CSRF-labs.md",
+    "BugBounty/Random-Stuff-Online/Twitter-Dump.md",
+    "Playbooks/Business_logic.md",
     "Resources/githubplan.md",
     "security_reaserch",
-    "Appsec",
+    "Application-Security/Web/Appsec",
     "core_knowledge/web_architechture",
     "core_knowledge",
     "Labs/Writeups/Metasploit-THM.md",
@@ -218,25 +265,13 @@
     "BugBounty/offensive/No-Rate-Limit and Rate Limit Bypass.md",
     "BugBounty/offensive/IDOR.md",
     "BugBounty/offensive/File Upload.md",
-    "BugBounty/offensive/DORK.md",
     "BugBounty/offensive",
-    "BugBounty/Random-Stuff-Online/Twitter-Dump.md",
     "BugBounty/Random-Stuff-Online/Recon.md",
     "BugBounty/Random-Stuff-Online",
     "BugBounty/Notes/VP Notes.md",
-    "BugBounty/Notes/Offensive-VC-Notes.md",
     "BugBounty/Notes",
-    "Application-Security/Web/notes.txt",
     "Application-Security/Web/DVWS-notes.md",
     "Application-Security/API/OWASP_TOP_10_API.md",
-    "Application-Security/Portswigger/CSRF/CSRF-labs.md",
-    "Labs/Portswigger/CSRF/CSRF-labs.md",
-    "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
-    "Labs/Portswigger/SQLI/SQL_notes.md",
-    "BugBounty/VP Notes.md",
-    "BugBounty/Authentication Bypass Vulnerabilities for Web Applications & APIs.md",
-    "BugBounty/DORK.md",
-    "Resources/Personal RoadMap.md",
-    "Resources/Untitled.md"
+    "Application-Security/Portswigger/CSRF/CSRF-labs.md"
   ]
 }

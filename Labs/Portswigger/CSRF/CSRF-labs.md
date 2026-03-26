@@ -33,7 +33,7 @@ then just changed the method of the same wrong csrf token and send rqst and it g
 - Approach : There are two user and  we have to check that can we use carlos CSRF token to wienr email changed !!  --> so for that we intercepted both the request and changed the CSRF to and take the CSRF POC and send it to victim. 
 --- 
 
-# LAB :  CSRF where token is tied to non-session cookie - NOT SOLVED YET
+# LAB :  CSRF where token is tied to non-session cookie 
 ```
 In a variation on the preceding vulnerability, some applications do tie the CSRF token to a cookie, but not to the same cookie that is used to track sessions. This can easily occur when an application employs two different frameworks, one for session handling and one for CSRF protection, which are not integrated together:
 
@@ -48,4 +48,10 @@ This situation is harder to exploit but is still vulnerable. If the website cont
 ```
 
 - Goal : exploit server to html page host csrf attack 
-- 
+  - here we have to use below code snippet and
+```
+`<form method="POST" action="https://YOUR-LAB-ID.web-security-academy.net/my-account/change-email"> <input type="hidden" name="email" value="anything%40web-security-academy.net"> </form> <script> document.forms[0].submit(); </script>`
+```
+- here CSRF token tied with the CSRF key and we have to add both we can add CSRF key in the response with Set-Cookie thing and here javascript wont work so remove that add in the html code inself. 
+- here first view exploit then change email again and then deliver it to the victim. 
+

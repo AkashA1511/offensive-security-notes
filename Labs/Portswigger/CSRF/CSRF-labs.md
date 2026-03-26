@@ -54,4 +54,11 @@ This situation is harder to exploit but is still vulnerable. If the website cont
 ```
 - here CSRF token tied with the CSRF key and we have to add both we can add CSRF key in the response with Set-Cookie thing and here javascript wont work so remove that add in the html code inself. 
 - here first view exploit then change email again and then deliver it to the victim. 
+---
+
+# LAB : CSRF where token is duplicated in cookie
+
+- Goal : use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address.
+-  here we have to add fake crsf token in the both same code snippet and here also java script was not working but use that html one snippet. 
+---
 

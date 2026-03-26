@@ -62,3 +62,37 @@ This situation is harder to exploit but is still vulnerable. If the website cont
 -  here we have to add fake crsf token in the both same code snippet and here also java script was not working but use that html one snippet. 
 ---
 
+# LAB :  SameSite Lax bypass via method override
+
+- Goal : changed the email but here in this lab they are using a Samesite LAX cookie so there is no CSRF token and with the same session we cannot changed the email. 
+- Approach : 
+   → just notice the POST request is not allowing a anything like without cookie or any other thing 
+   → so we tried to changed that Method but changeing method is not allowed so 
+   → so I use GET method but changed it to post method llike this : 
+      ⇒ 
+```
+GET /my-account/change-email?email=foo%40web-security-academy.net&_method=POST HTTP/1.1
+```
+
+      ⇒ use this request in the script section in the HTML code snippet to changed the email. 
+      ⇒ this is happend beacuse at login or a GET req cookie is diffrent and its behaviour to and at the time of changing its diffrent for the Methods so we did that. 
+
+---
+
+# Lab: CSRF where Referer validation depends on header being present
+
+Goal : This lab's email change functionality is vulnerable to CSRF.  It attempts to block cross domain requests but has an insecure  fallback.
+To solve the lab, use your exploit server to host an HTML  page that uses a CSRF attack to change the viewer's email address.         
+
+Approch : 
+	remove referrer completley 
+	and add this in the HTML payload : “<meta name="referrer" content="no-referrer">” 
+---
+
+
+# Lab: CSRF with broken Referer validation
+Goal : 
+Approch : 
+	history.pushState("", "", "/?YOUR-LAB-ID.web-security-academy.net")
+	Referrer-Policy: unsafe-url 
+--- 

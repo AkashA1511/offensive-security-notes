@@ -22,55 +22,21 @@
             }
           },
           {
-            "id": "f4f5f3807cc96c0b",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Tools/recon/Untitled.canvas",
-                "viewState": {
-                  "x": 267.92191117397573,
-                  "y": 305.9284265988372,
-                  "zoom": 0
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "Untitled"
-            }
-          },
-          {
-            "id": "3131e4d3fa0640fa",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Tools/recon/reconX.canvas",
-                "viewState": {
-                  "x": 162.30871627633314,
-                  "y": 141.73155189081015,
-                  "zoom": -0.10920126546584619
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "reconX"
-            }
-          },
-          {
             "id": "3d7a0490b9e477cc",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "BugBounty/offensive/DORK.md",
+                "file": "Labs/Portswigger/CORS.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "DORK"
+              "title": "CORS"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -127,8 +93,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "5f2b9a791c9b315e",
@@ -235,18 +200,24 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "3131e4d3fa0640fa",
+  "active": "3d7a0490b9e477cc",
   "lastOpenFiles": [
-    "BugBounty/offensive/DORK.md",
+    "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
+    "Labs/Portswigger/CORS.md",
+    "BugBounty/offensive/WEB-Pentesting Real.md",
+    "core_knowledge/CERT-PREP/OSCP",
+    "core_knowledge/CERT-PREP",
     "Tools/recon/reconX.canvas",
+    "BugBounty/offensive/DORK.md",
+    "BugBounty/offensive/pattern.png",
+    "Labs/Portswigger/CSRF/CSRF-labs.md",
+    "Labs/Portswigger/CSRF/CSRF.md",
     "BugBounty/Notes/METH.md",
     "Resources/Subfinder conf.md",
     "Tools/Rough Scripts.md",
     "BugBounty/Notes/Offensive-VC-Notes.md",
     "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
-    "Labs/Portswigger/CSRF/CSRF.md",
     "Resources/bug_bounty_checklist.html",
-    "Labs/Portswigger/CSRF/CSRF-labs.md",
     "BugBounty/Random-Stuff-Online/Twitter-Dump.md",
     "Playbooks/Business_logic.md",
     "Resources/githubplan.md",
@@ -267,11 +238,7 @@
     "BugBounty/offensive/File Upload.md",
     "BugBounty/offensive",
     "BugBounty/Random-Stuff-Online/Recon.md",
-    "BugBounty/Random-Stuff-Online",
     "BugBounty/Notes/VP Notes.md",
-    "BugBounty/Notes",
-    "Application-Security/Web/DVWS-notes.md",
-    "Application-Security/API/OWASP_TOP_10_API.md",
-    "Application-Security/Portswigger/CSRF/CSRF-labs.md"
+    "Application-Security/Web/DVWS-notes.md"
   ]
 }

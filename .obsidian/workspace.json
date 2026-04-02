@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Labs/Portswigger/CORS.md",
+                "file": "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "CORS"
+              "title": "Web App Pentesting Methodology"
             }
           }
         ],
@@ -202,8 +202,10 @@
   },
   "active": "3d7a0490b9e477cc",
   "lastOpenFiles": [
-    "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
     "Labs/Portswigger/CORS.md",
+    "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
+    "core_knowledge/CERT-PREP/EWPTX",
+    "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
     "BugBounty/offensive/WEB-Pentesting Real.md",
     "core_knowledge/CERT-PREP/OSCP",
     "core_knowledge/CERT-PREP",
@@ -236,9 +238,7 @@
     "BugBounty/offensive/No-Rate-Limit and Rate Limit Bypass.md",
     "BugBounty/offensive/IDOR.md",
     "BugBounty/offensive/File Upload.md",
-    "BugBounty/offensive",
     "BugBounty/Random-Stuff-Online/Recon.md",
-    "BugBounty/Notes/VP Notes.md",
-    "Application-Security/Web/DVWS-notes.md"
+    "BugBounty/Notes/VP Notes.md"
   ]
 }

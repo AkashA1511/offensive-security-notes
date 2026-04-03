@@ -95,6 +95,7 @@ Goal :
 Approch : 
 	history.pushState("", "", "/?YOUR-LAB-ID.web-security-academy.net")
 	Referrer-Policy: unsafe-url 
+	CSRF 
 --- 
 
 

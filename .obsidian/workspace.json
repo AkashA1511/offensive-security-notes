@@ -20,23 +20,8 @@
               "icon": "lucide-file",
               "title": "CSRF-labs"
             }
-          },
-          {
-            "id": "3d7a0490b9e477cc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "Web App Pentesting Methodology"
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -200,10 +185,11 @@
       "quick-snippets-and-navigation:Quick snippets and navigation: Search tags": false
     }
   },
-  "active": "3d7a0490b9e477cc",
+  "active": "fa3e32f93ee14089",
   "lastOpenFiles": [
-    "Labs/Portswigger/CORS.md",
+    "core_knowledge/CERT-PREP/EWPTX/Template.md",
     "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
+    "Labs/Portswigger/CORS.md",
     "core_knowledge/CERT-PREP/EWPTX",
     "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
     "BugBounty/offensive/WEB-Pentesting Real.md",
@@ -238,7 +224,6 @@
     "BugBounty/offensive/No-Rate-Limit and Rate Limit Bypass.md",
     "BugBounty/offensive/IDOR.md",
     "BugBounty/offensive/File Upload.md",
-    "BugBounty/Random-Stuff-Online/Recon.md",
-    "BugBounty/Notes/VP Notes.md"
+    "BugBounty/Random-Stuff-Online/Recon.md"
   ]
 }

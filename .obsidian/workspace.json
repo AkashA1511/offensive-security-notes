@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "BugBounty/Notes/Custom-Meth.md",
+                "file": "Labs/Portswigger/Business-Logic.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Custom-Meth"
+              "title": "Business-Logic"
             }
           }
         ]
@@ -187,11 +187,16 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
-    "Labs/Portswigger/CSRF/CSRF-labs.md",
+    "Security_Ressearch/DLL.md",
+    "Labs/Portswigger/Business-Logic.md",
+    "Security_Ressearch/Read-Code.md",
+    "Security_Ressearch/report_3_oauth2_v2_token.md",
+    "Labs/Portswigger/Command Injection.md",
+    "Labs/Portswigger/CORS.md",
     "BugBounty/Notes/Custom-Meth.md",
+    "Labs/Portswigger/CSRF/CSRF-labs.md",
     "core_knowledge/CERT-PREP/EWPTX/Template.md",
     "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
-    "Labs/Portswigger/CORS.md",
     "core_knowledge/CERT-PREP/EWPTX",
     "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
     "BugBounty/offensive/WEB-Pentesting Real.md",
@@ -219,11 +224,6 @@
     "Labs/Writeups",
     "Writeups/Metasploit-THM.md",
     "Writeups/# Privilege Escalation Via Role Manipulation.md",
-    "Writeups",
-    "BugBounty/offensive/Business Logic Bugs for Web Applications.md",
-    "BugBounty/offensive/Authentication Bypass Vulnerabilities for Web Applications & APIs.md",
-    "BugBounty/offensive/No-Rate-Limit and Rate Limit Bypass.md",
-    "BugBounty/offensive/IDOR.md",
-    "BugBounty/offensive/File Upload.md"
+    "Writeups"
   ]
 }

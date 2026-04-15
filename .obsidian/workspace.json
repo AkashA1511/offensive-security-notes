@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Labs/Portswigger/Business-Logic.md",
-                "mode": "source",
+                "file": "Resources/Checklist.md",
+                "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Business-Logic"
+              "title": "Checklist"
             }
           }
         ]
@@ -187,8 +187,10 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
-    "Security_Ressearch/DLL.md",
+    "Tools/Rough Scripts.md",
+    "Resources/Checklist.md",
     "Labs/Portswigger/Business-Logic.md",
+    "Security_Ressearch/DLL.md",
     "Security_Ressearch/Read-Code.md",
     "Security_Ressearch/report_3_oauth2_v2_token.md",
     "Labs/Portswigger/Command Injection.md",
@@ -208,7 +210,6 @@
     "Labs/Portswigger/CSRF/CSRF.md",
     "BugBounty/Notes/METH.md",
     "Resources/Subfinder conf.md",
-    "Tools/Rough Scripts.md",
     "BugBounty/Notes/Offensive-VC-Notes.md",
     "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
     "Resources/bug_bounty_checklist.html",
@@ -223,7 +224,6 @@
     "Labs/Writeups/# Privilege Escalation Via Role Manipulation.md",
     "Labs/Writeups",
     "Writeups/Metasploit-THM.md",
-    "Writeups/# Privilege Escalation Via Role Manipulation.md",
     "Writeups"
   ]
 }

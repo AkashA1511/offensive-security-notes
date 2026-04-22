@@ -141,3 +141,17 @@ gcc -shared -o profapi.dll profapi.c -m32
 - Matching architecture (x86/x64) is critical
 - Even a simple MessageBox payload proves full execution capability
 - DLL hijacking is low effort but high impact in real-world apps
+
+--- 
+
+### 1) DLL Hijacking (DLL file not found)
+
+Report Soon...
+
+### 2) DLL Hijacking (DLL File replace with importing functions )
+
+Report Soon...
+
+### 3) Privileged Escalation 
+
+Report Soon....

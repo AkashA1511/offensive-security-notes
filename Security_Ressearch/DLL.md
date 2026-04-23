@@ -155,3 +155,7 @@ Report Soon...
 ### 3) Privileged Escalation 
 
 Report Soon....
+
+### 4) Password Finding 
+
+Password changed Forcefully from changing things at code

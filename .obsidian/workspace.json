@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Resources/Checklist.md",
-                "mode": "preview",
+                "file": "Tools/EZ-Scripting.md",
+                "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Checklist"
+              "title": "EZ-Scripting"
             }
           }
         ]
@@ -187,10 +187,11 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
-    "Tools/Rough Scripts.md",
-    "Resources/Checklist.md",
-    "Labs/Portswigger/Business-Logic.md",
     "Security_Ressearch/DLL.md",
+    "Tools/EZ-Scripting.md",
+    "Resources/Checklist.md",
+    "Tools/Rough Scripts.md",
+    "Labs/Portswigger/Business-Logic.md",
     "Security_Ressearch/Read-Code.md",
     "Security_Ressearch/report_3_oauth2_v2_token.md",
     "Labs/Portswigger/Command Injection.md",
@@ -223,7 +224,6 @@
     "Labs/Writeups/Metasploit-THM.md",
     "Labs/Writeups/# Privilege Escalation Via Role Manipulation.md",
     "Labs/Writeups",
-    "Writeups/Metasploit-THM.md",
     "Writeups"
   ]
 }

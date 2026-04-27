@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Tools/EZ-Scripting.md",
+                "file": "source-code-auditing/Microblog-python-flask.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "EZ-Scripting"
+              "title": "Microblog-python-flask"
             }
           }
         ]
@@ -187,8 +187,10 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
-    "Security_Ressearch/DLL.md",
+    "CERT_PREP/CERT-PREP/OSCP/Vulnerability Scanning.md",
+    "source-code-auditing/Microblog-python-flask.md",
     "Tools/EZ-Scripting.md",
+    "Security_Ressearch/DLL.md",
     "Resources/Checklist.md",
     "Tools/Rough Scripts.md",
     "Labs/Portswigger/Business-Logic.md",
@@ -221,8 +223,6 @@
     "Application-Security/Web/Appsec",
     "core_knowledge/web_architechture",
     "core_knowledge",
-    "Labs/Writeups/Metasploit-THM.md",
-    "Labs/Writeups/# Privilege Escalation Via Role Manipulation.md",
     "Labs/Writeups",
     "Writeups"
   ]

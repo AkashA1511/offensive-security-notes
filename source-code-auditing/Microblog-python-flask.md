@@ -63,4 +63,4 @@ def index():
 - no user input needed only `?page=` to page through 
 	- reads page from url, then queries in the database for all posts order by time.
 	- returns html
-	
+

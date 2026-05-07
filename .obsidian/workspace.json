@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CERT_PREP/CERT-PREP/OSCP/Nmap Everything.md",
+                "file": "source-code-auditing/Microblog-python-flask.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Nmap Everything"
+              "title": "Microblog-python-flask"
             }
           }
         ]
@@ -187,8 +187,9 @@
   },
   "active": "4217fb69f57176ef",
   "lastOpenFiles": [
-    "CERT_PREP/CERT-PREP/OSCP/Vulnerability Scanning.md",
+    "source-code-auditing/fix.txt",
     "CERT_PREP/CERT-PREP/OSCP/Nmap Everything.md",
+    "CERT_PREP/CERT-PREP/OSCP/Vulnerability Scanning.md",
     "Labs/Portswigger/Business-Logic.md",
     "README.md",
     "source-code-auditing/Microblog-python-flask.md",
@@ -218,7 +219,6 @@
     "BugBounty/Notes/Offensive-VC-Notes.md",
     "Labs/Portswigger/SQLI/portswigger-sqli-Lab-notes.md",
     "Resources/bug_bounty_checklist.html",
-    "BugBounty/Random-Stuff-Online/Twitter-Dump.md",
     "security_reaserch",
     "Application-Security/Web/Appsec",
     "core_knowledge/web_architechture",

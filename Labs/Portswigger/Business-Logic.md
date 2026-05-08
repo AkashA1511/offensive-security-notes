@@ -18,3 +18,12 @@ what i have done is, login though the wiener and drop the /role-selector request
 There is another way like discover the content using engagement tools and do response manipulation and change the /role path to admin path. --> Try this method also (not able to discover that admin endpoint) -> watch solution. 
 
 ---
+
+#  Flawed enforcement of business rules
+
+Goal : Lightweight l33t leather jacket 
+
+Approach :  so there are  one coupan which is visible so there is one newsletter we apply to that we get a new coupan and from those coupan use alternatively we get the jacker as a free. 
+
+---
+

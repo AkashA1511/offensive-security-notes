@@ -50,3 +50,16 @@ def handleResponse(req, interesting):
 use this script for the trubo intruder and it worked. 
 
 ---
+
+# Multi-endpoint race conditions
+
+Goal : to buy a Leather Jacket using race condition 
+
+Approch : we can easily say that the race condition will happening on the gift card and coupan side which will be easy. 
+
+so first see the POST /cart and POST /cartcheckout request create a group in the repater and send request single connection 
+later add a gift card to the card and send the id 
+later change the id to the lether jacket and we can see insufficeint fund so remove the jacket from the cart in the url and add a giftcard but on the backend the id is still there so later send both rquest parallely and we solved the lab 
+
+----
+

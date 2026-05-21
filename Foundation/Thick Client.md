@@ -1,6 +1,9 @@
-
+[[TC-checklist]]
 [[Thick-client 2]]
 ---
+
+ **Detect It Easy**  --> tool for detection 
+
 ## 1. Environment Setup & Essential Tools
 
 ### Windows VM (Testing Sandbox)

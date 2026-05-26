@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "source-code-auditing/DODODOD.md",
+                "file": "Foundation/TC-checklist.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "DODODOD"
+              "title": "TC-checklist"
             }
           }
         ]
@@ -187,8 +187,11 @@
   },
   "active": "9bf8680bbf7d99ed",
   "lastOpenFiles": [
-    "Labs/Portswigger/RACE Condition.md",
+    "Foundation/Thick Client.md",
+    "Foundation/TC-checklist.md",
+    "Foundation/Thick-client 2.md",
     "source-code-auditing/DODODOD.md",
+    "Labs/Portswigger/RACE Condition.md",
     "Playbooks/SSRF.md",
     "Labs/Portswigger/Business-Logic.md",
     "source-code-auditing/Microblog-python-flask.md",
@@ -216,9 +219,6 @@
     "Tools/recon/reconX.canvas",
     "BugBounty/offensive/DORK.md",
     "BugBounty/offensive/pattern.png",
-    "Labs/Portswigger/CSRF/CSRF.md",
-    "BugBounty/Notes/METH.md",
-    "Resources/Subfinder conf.md",
     "Resources/bug_bounty_checklist.html",
     "security_reaserch",
     "Application-Security/Web/Appsec",

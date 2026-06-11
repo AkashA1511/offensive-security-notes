@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Foundation/TC-checklist.md",
+                "file": "Foundation/Arch-has-to-know.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "TC-checklist"
+              "title": "Arch-has-to-know"
             }
           }
         ]
@@ -187,8 +187,10 @@
   },
   "active": "9bf8680bbf7d99ed",
   "lastOpenFiles": [
-    "Foundation/Thick Client.md",
+    "source-code-auditing/Custom map.md",
+    "Foundation/Arch-has-to-know.md",
     "Foundation/TC-checklist.md",
+    "Foundation/Thick Client.md",
     "Foundation/Thick-client 2.md",
     "source-code-auditing/DODODOD.md",
     "Labs/Portswigger/RACE Condition.md",
@@ -213,11 +215,9 @@
     "core_knowledge/CERT-PREP/EWPTX/Web App Pentesting Methodology.md",
     "core_knowledge/CERT-PREP/EWPTX",
     "core_knowledge/CERT-PREP/OSCP/Vulnerability Scanning.md",
-    "BugBounty/offensive/WEB-Pentesting Real.md",
     "core_knowledge/CERT-PREP/OSCP",
     "core_knowledge/CERT-PREP",
     "Tools/recon/reconX.canvas",
-    "BugBounty/offensive/DORK.md",
     "BugBounty/offensive/pattern.png",
     "Resources/bug_bounty_checklist.html",
     "security_reaserch",

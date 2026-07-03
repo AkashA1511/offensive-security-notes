@@ -1,4 +1,4 @@
-
+# do this things asap
 # Phase 0: Core setup
 
 Before deep learning, set up your system.

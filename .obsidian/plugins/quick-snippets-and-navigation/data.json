@@ -1,6 +1,0 @@
-{
-  "defaultCodeBlockLanguage": "bash",
-  "defaultCalloutType": "info",
-  "use3BackticksForCodeBlock": false,
-  "defaultModalCommand": "obsidian-another-quick-switcher:search-command_recent-search"
-}

